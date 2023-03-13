@@ -1,0 +1,10 @@
+matplotlib
+openpyxl
+unidecode
+pandas
+tensorboard
+opencv-python
+flake8
+black
+attrs
+xlrd
