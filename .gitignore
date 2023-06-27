@@ -1,4 +1,6 @@
 data
+cross_validation_data
+heidelberg-test
 .idea
 temp
 *.jpg
