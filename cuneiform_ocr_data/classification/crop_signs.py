@@ -33,10 +33,10 @@ def hash(string) -> str:
 
 def crop_signs_from_images():
     mapping = build_ebl_dict()
-    path = Path("../../data/raw-data/lmu/lmu-classification")
+    path = Path("../../data/raw-data/lmu/lmu-classification2")
     images = path / "imgs"
     annotations = path / "annotations"
-    output_imgs = Path("../../data/processed-data/classification/lmu-no-broken")
+    output_imgs = Path("../../data/processed-data/classification/lmu2/")
     create_directory(output_imgs, overwrite=True)
 
     errors = 0
@@ -52,8 +52,8 @@ def crop_signs_from_images():
         ):
             if not bbox.is_partially_broken:
                 crop_img = image[
-                    bbox.top_left_y: bbox.top_left_y + bbox.height,
-                    bbox.top_left_x: bbox.top_left_x + bbox.width,
+                    bbox.top_left_y : bbox.top_left_y + bbox.height,
+                    bbox.top_left_x : bbox.top_left_x + bbox.width,
                 ]
                 sign = bbox.sign
                 try:

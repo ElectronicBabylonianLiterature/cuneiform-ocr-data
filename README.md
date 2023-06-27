@@ -1,5 +1,14 @@
 # Cuneiform OCR Data Preprocessing
 
+
+## Installation
+
+* requirements.txt
+* pip install -U openmim
+* mim install "mmocr==1.0.0rc5"  it is important to be this exact version because prepare_data.py won't work in newer versions (DATA_PARSERS are not backward compatible)
+
+
+
 ## Data Preprocessing for Text Detection (Predict only Bounding Boxes)
 
 1. Heidelberg Images (VAT Images from https://github.com/CompVis/cuneiform-sign-detection-dataset and the rest from CDLI (some ids needed manuell fixing)
@@ -42,7 +51,23 @@ Example: 0,0,10,10,KUR
    - Images are renamed `rename_to_mzl.py`
    - Images are mapped via urschrei-cdp cirrected_instances_forimport.xlsx and custom mapping via `convert_cdp_and_jooch.py`
 3. Cuneiform JOOCH images are not used due to bad quality currently
-4. Labasi Project is scraped with `labasi/crawl_labasi_page.py` (can take very long multiple hours with interruptions)
+4. Labasi Project is scraped with `labasi/crawl_labasi_page.py` (can take very long multiple hours with interruptions) and renamed manually to fit ebl.txt mapping
+
+## Preparing Classification Data
+`classification/gather_all.py` will gather all data from the different directories and merge them. In case of using a specific directory as test set one can specify that as data_set in code
+or make it `None` and specify the split variable so there will be a random split created. Categories "NoABZ" (just in labasi) and "NoABZ0" (= UnclearSign in ebl.txt) are not included.
+You have to set a MINIMUM_SAMPLE_SIZE which determines how many instances of a category have to be present to be included in train/testing. 
+The data will be in ./data folder ready for training in cuneiform_ocr repo. 
+**Important** the classes will be printed as a list in the screen. This list has to be copied to the config files for classification. Their index will associate the output of the Classification which is a Number with the corresponding ABZ Number.
+Finally run 'validate_imgs.py` to make sure there are no damaged images.
+
+## Preparing Detection Data
+`prepare_data.py` either pass a list of image names which are going to be the test set or a number which will be the percentage of the test set. The rest will be the training set.
+The data will be in ./data/icdar2015 folder ready for training in cuneiform_ocr repo. **Important** the path has to be ./data/icdar2015 otherwise the json will be empty check the json file !.
+Line 139-142 is run twice because we need the annotations & imgs twice if you later want to convert them using `convert_to_coco.py`. For training the detector only `data/icdar2015` is needed.
+
+## Preparing Recognition Coco Dataset
+Once you have run `prepare_data.py` you can run `convert_to_coco.py`. You have to give the list `classes` which has the mapping index to ABZ Number. Which was mentioned above.
 
 
 ## Acknowledgements/ Citation

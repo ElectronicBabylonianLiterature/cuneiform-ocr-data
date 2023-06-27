@@ -5,6 +5,7 @@ from typing import Union
 import matplotlib
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
+from cuneiform_ocr_data.delete_corrupt_imgs_and_annotations import delete_corrupt_images_and_annotations
 
 from cuneiform_ocr_data.validate_data import is_valid_file_size
 
@@ -142,15 +143,16 @@ if __name__ == "__main__":
     which are not good!
     """
 
-    """
+
     #Display single image + annotation
-    img = Path("../data/processed-data/heidelberg-merged-extracted-cleaned/imgs/P314346.jpg")
-    annotation = Path("../data/processed-data/heidelberg-merged-extracted-cleaned/annotations/gt_P314346-v2.txt")
-    display_bboxes(img, annotation)
-    quit()
-    """
-    data_path_str = "../data/processed-data/overfit"
+    #img = Path("/home/yunus/PycharmProjects/cuneiform-ocr-data/cuneiform_ocr_data/cross_validation_data/data_icdar2015_split1/icdar2015/textdet_imgs/test/P335652-0.jpg")
+    #annotation = Path("/home/yunus/PycharmProjects/cuneiform-ocr-data/cuneiform_ocr_data/cross_validation_data/data_icdar2015_split1/annotations/test/gt_P335652-0.txt")
+    #display_bboxes(img, annotation)
+    #quit()
+
+    data_path_str = "../data/lmu2"
     data_path = Path(data_path_str)
+
     display_bboxes(data_path)
 
     print("finished")
@@ -161,7 +163,7 @@ if __name__ == "__main__":
     print(medium_quality)
     print("Bad Quality")
     print(bad_quality)
-    # delete_corrupt_images_and_annotations(data_path, files_to_delete)
+    #delete_corrupt_images_and_annotations(data_path, files_to_delete)
     print("Manuel Fixing")
     print(manuel_fixing)
     # """

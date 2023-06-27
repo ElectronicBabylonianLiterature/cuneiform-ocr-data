@@ -9,6 +9,7 @@ from cuneiform_ocr_data.path import create_directory
 def _prep_data(data, path, class_to_int, txt_file_name):
     txt = ""
     for k, v in data.items():
+        print(f"{k} and {len(v)}")
         create_directory(f"{path}/{k}", overwrite=True)
         for file in v:
             shutil.copyfile(file, f"{path}/{k}/{file.name}")
@@ -47,35 +48,57 @@ def len_values(data):
 
 
 if __name__ == "__main__":
-
     create_directory(
         "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl", overwrite=True
     )
     random.seed(42)
-    data_lmu = prepare_data(Path("../../data/processed-data/classification/lmu-no-broken"))
-    data_heidelberg = prepare_data(
-        Path("../../data/processed-data/classification/heidelberg-no-broken")
+    data_lmu = prepare_data(
+        Path("../../data/processed-data/classification/lmu-no-broken")
     )
-    data_cdp = prepare_data(Path("../../data/processed-data/classification/urschrei-CDP-processed"))
+    data_heidelberg = prepare_data(
+        Path("../../data/processed-data/classification/heidelberg-train")
+    )
+    data_cdp = prepare_data(
+        Path("../../data/processed-data/classification/urschrei-CDP-processed")
+    )
     data_jooch = prepare_data(
-        Path("../../data/processed-data/classification/Cuneiform Dataset JOOCH processed")
+        Path(
+            "../../data/processed-data/classification/Cuneiform Dataset JOOCH processed"
+        )
     )
     data_labasi = prepare_labasi_data(
         Path("../../data/processed-data/classification/labasi")
     )
 
     data = merge_value_list_multiple_dicts(
-      data_lmu, data_heidelberg, data_cdp, data_jooch, data_labasi
+        data_lmu, data_heidelberg, data_cdp, data_jooch, data_labasi
     )
+    # data test is optional if data split is None then split will be used to randomly create the test data
+    data_test = prepare_data(
+        Path("../../data/processed-data/classification/heidelberg-test")
+    )
+    SPLIT = 0.2
 
-    print("Signs: ",len(data.keys()))
+    NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]
+
+    for elem in NOT_TO_INCLUDE:
+        data.pop(elem, None)
+        data_test.pop(elem, None)
+
+    print("Signs: ", len(data.keys()))
     print("Total Data:", len_values(data))
-    MINIMUM_SAMPLE_SIZE = 40
+    MINIMUM_SAMPLE_SIZE = 75
     data = {k: v for k, v in data.items() if len(v) >= MINIMUM_SAMPLE_SIZE}
+    # sort by length of list which is value in dict
+    data = {k: v for k, v in sorted(data.items(), key=lambda item: len(item[1]), reverse=True)}
+
+    classes = [f"{k} {len(v)}" for k, v in data.items()]
+    print([f"{k} {len(v)}" for k, v in data.items()])
+    # write classes as list to txt file
+
+
     class_to_int = {k: i for i, k in enumerate(data.keys())}
-    print("ABZ Signs: ",data.keys())
-
-
+    print("ABZ Signs: ", data.keys())
     print("Number of imgs: ", len_values(data))
     print("Number of signs: ", len(data))
 
@@ -95,48 +118,80 @@ if __name__ == "__main__":
     plt.show()
     """
     # sort dict by values
+    """
     data = {
         k: random.sample(v, len(v))
         for k, v in sorted(data.items(), key=lambda item: len(item[1]), reverse=True)
     }
     print({k: len(v) for k, v in data.items()})
-    test_data = {}
-    train_data = {}
-    SPLIT = 0.2
+    """
 
-    for k, v in data.items():
-        if len(v) >= MINIMUM_SAMPLE_SIZE:
-            split = int(SPLIT * len(v))
-            test_data[k] = v[:split]
-            train_data[k] = v[split:]
-    print("Number of signs:", len(train_data.keys()))
+    if SPLIT != 0.0 and data_test is None:
+        test_data = {}
+        train_data = {}
+        for k, v in data.items():
+            if len(v) >= MINIMUM_SAMPLE_SIZE:
+                split = int(SPLIT * len(v))
+                test_data[k] = v[:split]
+                train_data[k] = v[split:]
+    else:
+        test_category_not_in_train = {}
+        train_category_not_in_test = {}
+        train_data = data
+        test_data = {}
+        for k, v in data_test.items():
+            if k in train_data.keys():
+                test_data[k] = v
+            else:
+                print(f"Test data contains sign {k} which is not in train data")
+                test_category_not_in_train[k] = v
+        for k,v in train_data.items():
+            if k not in test_data.keys():
+                test_data[k] = [] # need empty directory even if train data is not present in test set
+                print(f"Train data contains sign {k} which is not in test data")
+                train_category_not_in_test[k] = train_data[k]
+        print("Test instances not in train: ", len_values(test_category_not_in_train))
+        print("Train instances not in test: ", len_values(train_category_not_in_test))
+        print()
+    train_data.pop("NoABZ", None)
+    test_data.pop("NoABZ", None)
+    print("Number of train signs:", len(train_data.keys()))
+    print("Number of train imgs: ", len_values(train_data))
+    print("Number of test signs:", len(test_data.keys()))
+    print("Number of test imgs: ", len_values(test_data))
+
+
 
 
 
     # copy each file of value of train_data dict to directory
     create_directory(
-        "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl/test_set/test_set",
+        "data/ebl/test_set/test_set",
         overwrite=True,
     )
     create_directory(
-        "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl/train_set/train_set",
+        "data/ebl/train_set/train_set",
         overwrite=True,
     )
     _prep_data(
         test_data,
         Path(
-            "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl/test_set/test_set"
+            "data/ebl/test_set/test_set"
         ),
         class_to_int,
         "test.txt",
     )
+
     _prep_data(
         train_data,
         Path(
-            "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl/train_set/train_set"
+            "data/ebl/train_set/train_set"
         ),
         class_to_int,
         "train.txt",
     )
+
+    with open("data/ebl/classes.txt", "w") as f:
+        f.write(str(data.keys()))
 
 

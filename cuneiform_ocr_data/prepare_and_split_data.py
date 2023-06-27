@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from typing import Sequence, Tuple, List
 
-from cuneiform_ocr.detection.validate_data import is_valid_data
+from cuneiform_ocr_data.validate_data import is_valid_data
 
 
 def split_data(
@@ -52,14 +52,6 @@ def prepare_data(
     data = sorted(images_path.iterdir(), key=lambda file: file.name)
     random.shuffle(data)
 
-    splits = split_data(split, data)
-
-    print(len(data))
-    print("Training :", len(splits[0]))
-    print("Split 1:", len(splits[0]) + len(splits[1]))
-    if len(splits) == 3:
-        print("Split 2:", len(splits[0]) + len(splits[1]) + len(splits[2]))
-
     if os.path.exists(output_path):
         shutil.rmtree(output_path)
     os.makedirs(output_path)
@@ -73,6 +65,28 @@ def prepare_data(
 
     annotations = Path("annotations")
     imgs = Path("textdet_imgs")
+
+    if isinstance(split[0], float):
+        splits = split_data(split, data)
+
+        print(len(data))
+        print("Training :", len(splits[0]))
+        print("Split 1:", len(splits[0]) + len(splits[1]))
+        if len(splits) == 3:
+            print("Split 2:", len(splits[0]) + len(splits[1]) + len(splits[2]))
+    else:
+        val_imgs = []
+
+        for elem in split:
+            # find all images in images_path where elem is in name
+            val_imgs.extend(list(images_path.glob(f"*{elem}*")))
+
+        train_imgs = list(set(list(images_path.iterdir())) - set(val_imgs))
+
+        create_folders(annotations / "train", imgs / "train", train_imgs)
+
+        create_folders(annotations / "test", imgs / "test", val_imgs)
+        return None
 
     create_folders(annotations / "train", imgs / "train", splits[0])
 

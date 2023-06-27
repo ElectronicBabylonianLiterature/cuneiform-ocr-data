@@ -4,8 +4,8 @@ from typing import Sequence, Optional, List
 import attr
 import pandas as pd
 
-CONTOUR_TYPES = ["SURFACE_AT_LINE", "STRUCT", "COLUMN_AT_LINE"]
-HAS_NO_SIGN = [*CONTOUR_TYPES, "BLANK", "RULING_DOLLAR_LINE"]
+CONTOUR_TYPES = ["SURFACE_AT_LINE", "STRUCT", "COLUMN_AT_LINE", "REVERSE", "OBVERSE"]
+HAS_NO_SIGN = [*CONTOUR_TYPES, "BLANK", "RULING_DOLLAR_LINE", "BOTTOM", "x", "blank", "unknownSign", "unknown", "UnclearSign", "unclear"]
 
 
 class BoundingBox:
@@ -135,8 +135,15 @@ class BoundingBoxesContainer:
 
     @property
     def contours(self):
+        for bbox in self.bounding_boxes:
+            if bbox.sign.upper() == "struct":
+                pass
+            if bbox.sign.upper() == "STRUCT":
+                asd = bbox.sign.upper() in "STRUCT"
+                pass
+
         return list(
-            filter(lambda bbox: bbox.sign in CONTOUR_TYPES, self.bounding_boxes)
+            filter(lambda bbox: bbox.sign.upper() in CONTOUR_TYPES, self.bounding_boxes)
         )
 
     def delete_within_bbox(self, within_bbox: BoundingBox):
