@@ -4,7 +4,7 @@ if __name__ == "__main__":
     """
     Read all files in path and delete duplicate lines
     """
-    path = Path("../../data/processed-data/heidelberg-merged/annotations")
+    path = Path("../../data/processed-data/heidelberg/heidelberg-merged/annotations")
     for file in path.iterdir():
         lines = open(file).readlines()
         lines_unique = list(set(lines))

@@ -49,41 +49,27 @@ def len_values(data):
 
 if __name__ == "__main__":
     create_directory(
-        "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl", overwrite=True
+        "./debug", overwrite=True
     )
     random.seed(42)
-    data_lmu = prepare_data(
-        Path("../../data/processed-data/classification/final-train")
-    )
-    data_cdp = prepare_data(
-        Path("../../data/processed-data/classification/urschrei-CDP-processed")
-    )
-    data_jooch = prepare_data(
-        Path(
-            "../../data/processed-data/classification/Cuneiform Dataset JOOCH processed"
-        )
-    )
-    data_labasi = prepare_labasi_data(
-        Path("../../data/processed-data/classification/labasi")
-    )
-
-    data = merge_value_list_multiple_dicts(
-        data_lmu, data_cdp, data_jooch, data_labasi
-    )
-    data_test = prepare_data(
+    data = prepare_data(
         Path("../../data/processed-data/classification/final-test")
     )
-    SPLIT = 0.
+    # data test is optional if data split is None then split will be used to randomly create the test data
+    data_test = data
+    data_test = None
+    SPLIT = 0
 
     NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]
 
     for elem in NOT_TO_INCLUDE:
         data.pop(elem, None)
-        data_test.pop(elem, None)
+        if data_test is not None:
+            data_test.pop(elem, None)
 
     print("Signs: ", len(data.keys()))
     print("Total Data:", len_values(data))
-    MINIMUM_SAMPLE_SIZE = 75
+    MINIMUM_SAMPLE_SIZE = 0
     data = {k: v for k, v in data.items() if len(v) >= MINIMUM_SAMPLE_SIZE}
     # sort by length of list which is value in dict
     data = {k: v for k, v in sorted(data.items(), key=lambda item: len(item[1]), reverse=True)}
@@ -122,7 +108,7 @@ if __name__ == "__main__":
     print({k: len(v) for k, v in data.items()})
     """
 
-    if SPLIT != 0.0 and data_test is None:
+    if  data_test is None:
         test_data = {}
         train_data = {}
         for k, v in data.items():

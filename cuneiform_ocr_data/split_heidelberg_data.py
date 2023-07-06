@@ -5,7 +5,7 @@ from cuneiform_ocr_data.prepare_data import HEIDELBERG_VAL_SET
 
 if __name__ == "__main__":
     data_path = Path(
-        "/home/yunus/PycharmProjects/cuneiform-ocr-data/data/processed-data/heidelberg-merged-extracted-cleaned-2"
+        "/data/processed-data/heidelberg/heidelberg-merged-extracted-cleaned-2"
     )
     output_path = Path(
         "/home/yunus/PycharmProjects/cuneiform-ocr-data/data/processed-data/heidelberg-split"

@@ -64,8 +64,8 @@ def extract_contours(img: np.ndarray, bboxes):
 
 if __name__ == "__main__":
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("../data/annotations")
-    output_data_path = Path("../data/lmu2")
+    input_data = Path("../data/processed-data/lmu/lmu-0628")
+    output_data_path = Path("../data/processed-data/lmu/lmu-0628-extracted")
 
     input_annotations_folder = input_data / "annotations"
     input_imgs_folder = input_data / "imgs"
