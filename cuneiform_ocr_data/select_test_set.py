@@ -17,13 +17,14 @@ test_set = random.sample(lmu_extracted, 50)
 #print(test_set)
 extracted = []
 # iter through path and move all files from test_set to test folder
-for file in (path / "imgs").iterdir():
-    if file.name in test_set:
-        extracted.append(file.name)
-        shutil.move(file, test_path / "imgs")
+if __name__ == "__main__":
+    for file in (path / "imgs").iterdir():
+        if file.name in test_set:
+            extracted.append(file.name)
+            shutil.move(file, test_path / "imgs")
 
-for file in (path / "annotations").iterdir():
-    if file.stem.split("gt_")[1] in list(map(lambda x: x.split(".jpg")[0],test_set)):
-        shutil.move(file, test_path / "annotations")
+    for file in (path / "annotations").iterdir():
+        if file.stem.split("gt_")[1] in list(map(lambda x: x.split(".jpg")[0],test_set)):
+            shutil.move(file, test_path / "annotations")
 
-print(len(extracted))
+    print(len(extracted))
