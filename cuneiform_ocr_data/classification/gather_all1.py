@@ -49,16 +49,16 @@ def len_values(data):
 
 if __name__ == "__main__":
     create_directory(
-        "./debug", overwrite=True
+        "./data", overwrite=True
     )
     random.seed(42)
     data = prepare_data(
-        Path("../../data/processed-data/classification/final-test")
+        Path("/home/yunus/PycharmProjects/cuneiform-ocr-3/debug")
     )
     # data test is optional if data split is None then split will be used to randomly create the test data
     data_test = data
     data_test = None
-    SPLIT = 0
+    SPLIT = 1
 
     NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]
 
@@ -84,10 +84,7 @@ if __name__ == "__main__":
     print("Number of imgs: ", len_values(data))
     print("Number of signs: ", len(data))
 
-    with open(
-        "../../../cuneiform-ocr/cuneiform_ocr/classification/data/ebl/classes.txt", "w"
-    ) as f:
-        f.write("\n".join(data.keys()))
+
     """
     Plot the number of images per sign
     print("Number of signs:", len(data))
@@ -175,5 +172,6 @@ if __name__ == "__main__":
 
     with open("data/ebl/classes.txt", "w") as f:
         f.write(str(data.keys()))
+
 
 

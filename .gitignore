@@ -17,3 +17,5 @@ logs/
 work_dirs
 0processed_data
 *.gz
+cuneiform_ocr_data/classification/data1
+cuneiform_ocr_data/data-coco
