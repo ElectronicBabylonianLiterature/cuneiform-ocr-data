@@ -131,6 +131,10 @@ def create_thumbnail(image_path: Path, thumbnail_path: Path) -> None:
 
 
 if __name__ == "__main__":
+    """
+    This script creates a xml file for the php annotation tool.
+    https://github.com/CompVis/cuneiform-sign-detection-webapp
+    """
     save_path_file = "imagesList.xml"
     img_path = Path("../../temp/heidelberg/imgs")
     images = [image.stem for image in img_path.iterdir()]

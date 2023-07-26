@@ -135,13 +135,6 @@ class BoundingBoxesContainer:
 
     @property
     def contours(self):
-        for bbox in self.bounding_boxes:
-            if bbox.sign.upper() == "struct":
-                pass
-            if bbox.sign.upper() == "STRUCT":
-                asd = bbox.sign.upper() in "STRUCT"
-                pass
-
         return list(
             filter(lambda bbox: bbox.sign.upper() in CONTOUR_TYPES, self.bounding_boxes)
         )

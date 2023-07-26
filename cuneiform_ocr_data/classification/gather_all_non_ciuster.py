@@ -99,22 +99,22 @@ if __name__ == "__main__":
 
     print("Signs: ", len(data.keys()))
     print("Total Data:", len_values(data))
-    MINIMUM_SAMPLE_SIZE = 50
+    MINIMUM_SAMPLE_SIZE = 0
     data = {k: v for k, v in data.items() if len(v) >= MINIMUM_SAMPLE_SIZE}
     # sort by length of list which is value in dict
     data = {k: v for k, v in sorted(data.items(), key=lambda item: len(item[1]), reverse=True)}
 
     # merge all keys where the length of the value is less than 125
 
-    cluster = {k: v for k, v in data.items() if len(v) < 90}
-    data = {k: v for k, v in data.items() if len(v) >= 90}
-    data["cluster"] = [item for sublist in cluster.values() for item in sublist]
+    #cluster = {k: v for k, v in data.items() if len(v) < 90}
+    #data = {k: v for k, v in data.items() if len(v) >= 90}
+    #data["cluster"] = [item for sublist in cluster.values() for item in sublist]
     # print keys of cluster as list
-    print("Cluster")
-    print([k for k, v in cluster.items()])
+    #print("Cluster")
+    #print([k for k, v in cluster.items()])
     # get length of all values added together
-    l = sum([len(v) for k, v in cluster.items()])
-    pass
+    #l = sum([len(v) for k, v in cluster.items()])
+    #pass
 
 
     classes = [f"{k} {len(v)}" for k, v in data.items()]
@@ -130,14 +130,24 @@ if __name__ == "__main__":
 
     #Plot the number of images per sign
     print("Number of signs:", len(data))
-    print("\n".join([f"{k} {v}" for k, v in data.items()]))
+    #print("\n".join([f"{k} {v}" for k, v in data.items()]))
     #print(f"First Index with then Items: {list(data.values()).index(10)}")
     ### matplotlib dict plot
     data1 = {k: len(v) for k, v in data.items()}
     import matplotlib.pyplot as plt
+    # tight layout
+    plt.tight_layout()
     plt.bar(range(len(data1.values())), data1.values())
-    plt.xticks(rotation=90)
-    plt.show()
+    #plt.xticks(rotation=90)
+    # name x acis and y axis
+    plt.xlim(xmin=0, xmax=300)
+    plt.xlabel("Signs classes")
+    plt.ylabel("Number of images")
+
+    #plt.show()
+    # save to file tight layout
+
+    plt.savefig("pareto.png", dpi=300, bbox_inches='tight')
 
     # sort dict by values
 
