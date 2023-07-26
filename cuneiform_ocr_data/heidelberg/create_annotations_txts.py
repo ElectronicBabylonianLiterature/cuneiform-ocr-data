@@ -1,3 +1,4 @@
+import shutil
 from ast import literal_eval
 from pathlib import Path
 from urllib.error import HTTPError
@@ -7,8 +8,8 @@ import numpy as np
 import pandas as pd
 from PIL.Image import Image
 
-from cuneiform_sign_classification.preprocessing import build_mzl_dict
-from cuneiform_sign_detection.bounding_boxes import BoundingBoxesContainer, BoundingBox
+from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer, BoundingBox
+from cuneiform_ocr_data.sign_mappings.mappings import build_mzl_dict
 from cuneiform_ocr_data.utils import (
     create_directory,
 )
@@ -74,6 +75,7 @@ if __name__ == "__main__":
     Link from https://github.com/CompVis/cuneiform-sign-detection-dataset
     """
     save_data_path = Path("temp") / "heidelberg"
+    create_directory(save_data_path, overwrite=True)
     train_bbox_annotations = pd.read_csv(
         "../../data/raw-data/heidelberg/annotations_csv/bbox_annotations_train_full.csv"
     )
@@ -84,4 +86,8 @@ if __name__ == "__main__":
     )
     mzl_dict = build_mzl_dict()
     process(mzl_dict, save_data_path, full_df)
-    # run validate_data once all images are present in imgs folder
+    # copy directory to data folder
+    # create_directory(save_data_path / "imgs", overwrite=True)
+    shutil.copytree(
+        "../../data/raw-data/heidelberg/heidelberg-imgs", save_data_path / "imgs"
+    )

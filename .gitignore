@@ -1,6 +1,8 @@
 data
 cross_validation_data
 heidelberg-test
+cuneiform_ocr_data/heidelberg/temp
+cuneiform_ocr_data/labasi/data
 .idea
 temp
 *.jpg
@@ -17,5 +19,7 @@ logs/
 work_dirs
 0processed_data
 *.gz
-cuneiform_ocr_data/classification/data1
+cuneiform_ocr_data/classification/data
 cuneiform_ocr_data/data-coco
+cuneiform_ocr_data/data
+data.tar.gz

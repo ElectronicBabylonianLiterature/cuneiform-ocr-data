@@ -1,8 +1,8 @@
-import pandas as pd
-from pathlib import Path
 import shutil
+from pathlib import Path
 
-from cuneiform_ocr_data.classification.utils import build_ebl_dict
+from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
+from cuneiform_ocr_data.utils import create_directory
 
 cooh = [
     "GIR3",
@@ -408,14 +408,21 @@ def map_cooh_signs():
 
 if __name__ == "__main__":
     ebl = build_ebl_dict()
-    bundled_path = Path("../../../data/raw-data/Cuneiform Dataset JOOCH bundled")
-    destination = Path("../../../data/raw-data/Cuneiform Dataset JOOCH processed")
+    bundled_path = Path("data/raw-data/jooch/Cuneiform Dataset JOOCH bundled")
+    destination = Path("data/processed-data/classification/Cuneiform Dataset JOOCH")
+    create_directory(destination, overwrite=True)
     jooch = {x: y for x, y in zip(cooh, parsed)}
+    unprocessed_signs = 0
     for file in bundled_path.iterdir():
         sign = file.stem.split("_")[0]
         abz = ebl.get(jooch[sign].upper())
         if abz is not None:
             shutil.copy(file, destination / f"{abz}_jooch_{file.stem}.png")
+        else:
+            print(f"Sign {sign} not found in Ebl Mapping")
+            unprocessed_signs += 1
+    print("Total Signs: ", len(list(bundled_path.iterdir())))
+    print(f"Unprocessed Signs: {unprocessed_signs}")
 
 
 def bundle_cooh(source, destination):

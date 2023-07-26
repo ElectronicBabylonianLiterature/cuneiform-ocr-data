@@ -1,0 +1,1 @@
+necessary to create icdar2015 json files to train later with mmocr. That's why mmocr library is required. Icdar2015 annotations are created in convert_to_icdar2015.py

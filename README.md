@@ -1,39 +1,39 @@
-# Cuneiform OCR Data Preprocessing
+# Cuneiform OCR Data Preprocessing for Ebl Project (https://www.ebl.lmu.de/, https://github.com/ElectronicBabylonianLiterature
+# Data part of **Two-Stage Sign Detection for Cuneiform Tablets** which has been submitted July 2023 (If you use this work/ data please make sure to cite us, we will have it on arvix asap)
 
 
 ## Installation
+* requirements.txt (includes opencv-python)
+* `pip3 install torch torchvision  --index-url https://download.pytorch.org/whl/cpu`
+* `pip install -U openmim`
+* `mim install "mmocr==1.0.0rc5"`  it is important to use this exact version because prepare_data.py won't work in newer versions (DATA_PARSERS are not backward compatible)
+* `mim install "mmcv==2.0.0"`
 
-* requirements.txt
-* pip install -U openmim
-* mim install "mmocr==1.0.0rc5"  it is important to be this exact version because prepare_data.py won't work in newer versions (DATA_PARSERS are not backward compatible)
-
-
+Make sure PYTHONPATH is root of repository
 
 ## Data Preprocessing for Text Detection (Predict only Bounding Boxes)
+1. Preprocessing Heidelberg Data, all Details in `cuneiform_ocr_data/heidelberg`
+2. Ebl (our) data in `data/raw-data/ebl` (generally better to create test set from ebl data because quality is better)
+	2.1 Run `extract_contours.py` with `EXTRACT_AUTMOATICALLY=False` on `data/raw-data/ebl/detection`
+	2.2 Run `display_bboxes.py` and use keys to delete all which are not good quality
+3. Run `select_test_set.py` which will select 50 randomly images from `data/processed-data/ebl/ebl-detection-extracted-deleted` (currently no option to create val set because of small size of dataset)
+4. `data/processed-data/ebl/ebl-detection-extracted-test` has .txt file will names of all images in test set (this will be necessary to create train,test for classification later)
+4. Now merge `data/processed-data/heidelberg/heidelberg-extracted-deleted` and `ebl-detection-extracted-train` which will be your train set (see `data/processed-data/detection`, around 295 train and 50 test instances).
+5. Optionally. Create Icdar2015 Style dataset using `convert_to_icdar2015.py`
+6. Optionally: Create Coco Style Dataset  `convert_to_coco.py` will create only a test set coco style
 
-1. Heidelberg Images (VAT Images from https://github.com/CompVis/cuneiform-sign-detection-dataset and the rest from CDLI (some ids needed manuell fixing)
-   - all Heidelberg imgs at `data/raw-data/heidelberg/heidelberg-imgs`
-2. The csv files from https://github.com/CompVis/cuneiform-sign-detection-dataset have to be converted to correct format with `create_annotations_txts.py`
-   -  csv files at `data/raw-data/heidelberg/annotations_csv`
-   - Converted Heidelberg annotations  `data/processed-data/heidelberg/annotations`
-   - Heidelberg MZL is converted to Oracc Global Sign List via `mzl.txt`
-   - P336663 and P397986 annotations are shifted (P336663 is shifted by 340, 1790 and P397986 is shifted by 370 and 60)
-3. Heidelberg-xml is some more annotations added to original Heidelberg Annotations. They need to be converted to correct format and merged with Heidelberg annotations `parse_corrected_xml.py` and merged with `merge_corrected_xml.py`
-   - gt_P314346-v3.txt replaced gt_P314346.txt and all others have to use the highest version so v3 for example if present `data/processed-data/heideberg-merged-2`
-   - Once merged remove duplicate lines in ground_truth `remove_duplicates.py`
-   - Files at `data/processed-data/heideberg-merged`
-4. Extract Contours (Obverse, Reverse, ...)
-   - Extract contours from Heidelberg Data (`data/processed-data/heideberg-merged-extracted`)
-   - Extract contours using Struct/Obverse and Reverse BoundingBoxes from LMU Data (`data/processed-data/lmu-detection-extracted`)
-5. Manuelly scroll through Heidelberg Data delete invalid imgs and fix the one which need manuell fixing
-   - Use `display_bboxes.py` to manually display imgs + ground_truth
-   - Delete all invalid imgs `data/processed-data/heideberg-merged-extracted-cleaned`
-   - Some random wrong bounding boxes are deleted with `delete_bbox_within_rectangle.py` and P336009.jpg contours were extracted manually (`data/processed-data/heideberg-merged-extracted-cleaned-2`)
-6. Merge LMU + Heidelberg data -> `data/processed-data/total`
-   - This Dataset can be used for training only the Oracc Global Sign List has to be converted to ABZ Sign List with ebl.txt
-   - The last step is optional Oracc Global Sign List is more fine grained than ABZ Sign List
 
-  
+## Data Preprocessing for Image Classification (Predict only Bounding Boxes)
+
+1. Fetch Sign Images from https://labasi.acdh.oeaw.ac.at/ using their api in `cuneiform_ocr_data/labasi`
+2. Run `classification/cdp/main.py` will map data using our ABZ Sign Mapping some signs can't be mapped (should be checked by an assyiriologist for correctness)
+3. Run `classification/jooch/main.py` will map data using our ABZ Sign Mapping some signs can't be mapped (should be checked by an assyiriologist for correctness)
+4. Merge `data/processed-data/heidelberg/heidelberg` and `data/raw-data/ebl/ebl-classification` to `data/processed-data/ebl+heidelberg-classification`
+5. Split `data/processed-data/ebl+heidelberg-classification` to `data/processed-data/ebl+heidelberg-classification-train` and `data/processed-data/ebl+heidelberg-classification-test` by copying all files which are part of the detection test set using the script `move_test_set_for_classification.py`
+6. Run `crop_sign.py` on `data/processed-data/ebl+heidelberg-classification-train` and `data/processed-data/ebl+heidelberg-classification-test` you can modify `crop_signs.py` to include/exclude partially broken or UnclearSigns.
+7. `data/processed-data/classification` should contain Cuneiform Dataset JOOCH, ebl+heidelberg/ebl+heidelberg-train, ebl+heidelberg/ebl+heidelberg-test, labasi and urschrei-CDP-processed
+8. `gather_all.py` will gather and finalize the format for training/testing of all the folders from 7. (gather_all.py will create "cuneiform_ocr_data/classification/data" directory with classes.txt which has all classes used for training/testing)
+
 ### Dataformat
 image: P3310-0.jp, with gt_P3310-0.txt.
 
@@ -43,38 +43,24 @@ Sign followed by ? means it is partially broken. Unclear signs have value 'Uncle
 
 Example: 0,0,10,10,KUR
 
-## Data Preprocessing for Image (Sign) Classification
+## Data Preprocessing for Image (Sign) Classification (Details)
 1. Images are cropped from LMU and Heidelberg using `crop_signs.py` and converted to ABZ Sign List via ebl.txt mapping from OraccGlobalSignList/ MZL to ABZ Number
-   - Partially are broken are treated as "unbroken"
-   - Unclear Sign is included to added ABZ Number
+   - Partially Broken and Unclear Signs can be dealt included/excluded on parameter in script
 2. Images from CDP (urschrei-cdp) are renamed using the mapping from the urschrei-repo https://github.com/urschrei/CDP/csvs (look at cuneiform_ocr/preprocessing_cdp)
    - Images are renamed `rename_to_mzl.py`
-   - Images are mapped via urschrei-cdp cirrected_instances_forimport.xlsx and custom mapping via `convert_cdp_and_jooch.py`
+   - Images are mapped via urschrei-cdp corrected_instances_forimport.xlsx and custom mapping via `convert_cdp_and_jooch.py`
 3. Cuneiform JOOCH images are not used due to bad quality currently
 4. Labasi Project is scraped with `labasi/crawl_labasi_page.py` (can take very long multiple hours with interruptions) and renamed manually to fit ebl.txt mapping
 
-## Preparing Classification Data
-`classification/gather_all.py` will gather all data from the different directories and merge them. In case of using a specific directory as test set one can specify that as data_set in code
-or make it `None` and specify the split variable so there will be a random split created. Categories "NoABZ" (just in labasi) and "NoABZ0" (= UnclearSign in ebl.txt) are not included.
-You have to set a MINIMUM_SAMPLE_SIZE which determines how many instances of a category have to be present to be included in train/testing. 
-The data will be in ./data folder ready for training in cuneiform_ocr repo. 
-**Important** the classes will be printed as a list in the screen. This list has to be copied to the config files for classification. Their index will associate the output of the Classification which is a Number with the corresponding ABZ Number.
-Finally run 'validate_imgs.py` to make sure there are no damaged images.
-
-## Preparing Detection Data
-`prepare_data.py` either pass a list of image names which are going to be the test set or a number which will be the percentage of the test set. The rest will be the training set.
-The data will be in ./data/icdar2015 folder ready for training in cuneiform_ocr repo. **Important** the path has to be ./data/icdar2015 otherwise the json will be empty check the json file !.
-Line 139-142 is run twice because we need the annotations & imgs twice if you later want to convert them using `convert_to_coco.py`. For training the detector only `data/icdar2015` is needed.
 
 ## Preparing Recognition Coco Dataset
-Once you have run `prepare_data.py` you can run `convert_to_coco.py`. You have to give the list `classes` which has the mapping index to ABZ Number. Which was mentioned above.
+Run `convert_to_coco.py`. You have to give the list `classes` which has the mapping index to ABZ Number. Which was mentioned above at step 8.
 
 
 ## Acknowledgements/ Citation
 - Deep learning of cuneiform sign detection with weak supervision using transliteration alignment [https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0243039](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0243039)
   - Annotated Tablets (75 Tablets) [https://compvis.github.io/cuneiform-sign-detection-dataset/](https://compvis.github.io/cuneiform-sign-detection-dataset/)
   - -> Heidelberg Data
-- Synthetic Cuneiform Dataset (2000 Tablets) from [https://github.com/cdli-gh/Cuneiform-OCR](https://github.com/cdli-gh/Cuneiform-OCR) (not currently used for training)
 - Towards Query-by-eXpression Retrieval of Cuneiform Signs [https://patrec.cs.tu-dortmund.de/pubs/papers/Rusakov2020-TQX]
   - -> JOOCH Dataset https://graphics-data.cs.tu-dortmund.de/docs/publications/cuneiform/
 - Labasi Project https://labasi.acdh.oeaw.ac.at/

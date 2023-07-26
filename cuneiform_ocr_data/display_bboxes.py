@@ -5,9 +5,10 @@ from typing import Union
 import matplotlib
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
-from cuneiform_ocr_data.delete_corrupt_imgs_and_annotations import delete_corrupt_images_and_annotations
-
-from cuneiform_ocr_data.validate_data import is_valid_file_size
+from cuneiform_ocr_data.utils import (
+    is_valid_file_size,
+    delete_corrupt_images_and_annotations,
+)
 
 matplotlib.use("tkAgg")
 from matplotlib import pyplot as plt
@@ -138,20 +139,26 @@ def show_img(image_path: Path, gt_path: Path) -> None:
 
 if __name__ == "__main__":
     """
-    display annotations boxes and images. Skip through images with pressing "ESC" or pressing "k" which will
-    log image id to console. This way one can manually skip through training data and exclude data samples
+    display annotations boxes and images. Skip through images with pressing "ESC, y, a, q, ,w, e" which will log the
+    image id to console and close the image. Images are saved in different categories depending on the key pressed
+    (see beginning of file). Images in category to delete will be deleted with their annotations.
+    To not delete any image comment out last line.
+    This way one can manually skip through training data and exclude data samples
     which are not good!
+    You can pass image path and annotations path for single image or directory data/annotations, data/imgs
     """
 
+    # Display single image + annotations
+    # img = Path(
+    # "/home/yunus/PycharmProjects/cuneiform-ocr-data2/data/processed-data/heidelberg/heidelberg/imgs/P336009.jpg"
+    # )
+    # annotation = Path(
+    # "/home/yunus/PycharmProjects/cuneiform-ocr-data2/data/processed-data/heidelberg/heidelberg/annotations/gt_P336009.txt"
+    # )
+    # display_bboxes(img, annotation)
+    # quit()
 
-    #Display single image + annotation
-    #img = Path("../data/processed-data/heidelberg/heidelberg-merged-extracted-cleaned-2/imgs/P335946-0.jpg")
-    #annotation = Path(
-     #   "../data/processed-data/heidelberg/heidelberg-merged-extracted-cleaned-2/annotations/gt_P335946-0.txt")
-    #display_bboxes(img, annotation)
-    #quit()
-
-    data_path_str = "../data/processed-data/heidelberg/heidelberg-merged-extracted-cleaned-2"
+    data_path_str = "/home/yunus/PycharmProjects/cuneiform-ocr-data2/data/processed-data/ebl/ebl-detection-extracted-deleted"
     data_path = Path(data_path_str)
 
     display_bboxes(data_path)

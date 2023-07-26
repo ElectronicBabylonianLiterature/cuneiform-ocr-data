@@ -1,7 +1,9 @@
 import shutil
 from pathlib import Path
 import pandas as pd
-from cuneiform_ocr_data.classification.utils import build_ebl_dict
+
+from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
+from cuneiform_ocr_data.utils import create_directory
 
 
 def revert_dict(d):
@@ -18,12 +20,15 @@ def read_cdp(path):
 
 
 if __name__ == "__main__":
-    destination = Path("../../../data/raw-data/urschrei-CDP-processed")
+    destination = Path("data/processed-data/classification/urschrei-CDP-processed")
+    create_directory(destination, overwrite=True)
     ebl = build_ebl_dict()
     ebl_revert = revert_dict(ebl)
 
-    map0 = read_cdp("./corrected_instances_forimport.xlsx")
-    map1 = read_cdp("./instance_cleaned_wip.xls")
+    map0 = read_cdp(
+        "cuneiform_ocr_data/classification/cdp/corrected_instances_forimport.xlsx"
+    )
+    map1 = read_cdp("cuneiform_ocr_data/classification/cdp//instance_cleaned_wip.xls")
 
     empty_values = [k for k, v in map0.items() if v == ""]
     for empty_value in empty_values:
@@ -31,7 +36,7 @@ if __name__ == "__main__":
 
     unmapped_files = []
     unmapped_signs = {}
-    for file in Path("../../../data/raw-data/urschrei-CDP").iterdir():
+    for file in Path("data/raw-data/urschrei-CDP").iterdir():
         file_id = file.stem
         mapped_to = map0.get(file_id)
         if mapped_to is None:

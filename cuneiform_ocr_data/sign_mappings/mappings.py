@@ -5,7 +5,7 @@ import pandas as pd
 
 def build_ebl_dict():
     mapping = pd.read_csv(
-        Path(Path(__file__).resolve().parent.parent / "ebl.txt"),
+        Path(Path(__file__).resolve().parent / "ebl.txt"),
         header=None,
         delimiter=" ",
         keep_default_na=False,
@@ -19,7 +19,7 @@ def build_ebl_dict():
 
 def build_mzl_dict():
     mzl = pd.read_csv(
-        Path(__file__).resolve().parent.parent / "mzl.txt",
+        Path(__file__).resolve().parent / "mzl.txt",
         header=None,
         keep_default_na=False,
     ).values.tolist()

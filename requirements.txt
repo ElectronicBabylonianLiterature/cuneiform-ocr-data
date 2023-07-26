@@ -8,6 +8,3 @@ flake8
 black
 attrs
 xlrd
-mmcv==2.0.0
-mmdet==3.0.0
-mmocr==1.0.0rc5

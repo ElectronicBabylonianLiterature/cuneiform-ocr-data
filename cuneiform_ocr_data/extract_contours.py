@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer, BoundingBox
-from cuneiform_ocr_data.path import create_directory
+from cuneiform_ocr_data.utils import create_directory
 
 
 def calculate_cropped_coordinates(
@@ -63,9 +63,15 @@ def extract_contours(img: np.ndarray, bboxes):
 
 
 if __name__ == "__main__":
+    """
+    This script will extract contours from images and create new images and annotations.
+    If struct bounding boxes (obverse, reverse, ...) are given in the annotations the contours can be extracted using
+    these annotations. If not, the contours will be extracted automatically. One has to set the flag.
+    """
+
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("../data/processed-data/all_lmu")
-    output_data_path = Path("../data/processed-data/all_lmu_extracted")
+    input_data = Path("data/raw-data/ebl/ebl-detection")
+    output_data_path = Path("data/processed-data/ebl/ebl-detection-extracted1")
 
     input_annotations_folder = input_data / "annotations"
     input_imgs_folder = input_data / "imgs"

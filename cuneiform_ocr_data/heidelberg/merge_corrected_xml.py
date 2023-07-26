@@ -7,9 +7,9 @@ if __name__ == "__main__":
     Merge files from temp/heidelberg/annotations and temp/heidelberg-xml/annotations
     and save them at temp/heidelberg/annotations_merged
     """
-    original_files_path = Path("../../data/processed-data/heidelberg/annotations")
-    refined_files_path = Path("../../data/processed-data/heidelberg/heidelberg-xml/annotations")
-    write_path = Path("../../data/processed-data/heidelberg/heidelberg-merged/annotations")
+    original_files_path = Path("temp//heidelberg/annotations")
+    refined_files_path = Path("temp/annotations")
+    write_path = Path("temp/heidelberg-corrected")
     create_directory(write_path, overwrite=True)
     refined_files = list([elem.stem for elem in refined_files_path.iterdir()])
     for file in original_files_path.iterdir():

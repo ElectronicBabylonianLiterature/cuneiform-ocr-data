@@ -2,8 +2,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List
 
-from cuneiform_sign_classification.preprocessing import build_mzl_dict
-from cuneiform_sign_detection.bounding_boxes import BoundingBoxesContainer, BoundingBox
+from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer, BoundingBox
+from cuneiform_ocr_data.sign_mappings.mappings import build_mzl_dict
 from cuneiform_ocr_data.utils import create_directory
 
 
@@ -36,8 +36,10 @@ def convert_xml_bounding_box_to_bounding_box(file_path: Path, mzl_dict):
 
 if __name__ == "__main__":
     mzl_dict = build_mzl_dict()
-    destination_path = Path("temp/heidelberg-xml/annotations")
+    destination_path = Path("temp") / "annotations"
     create_directory(destination_path, overwrite=True)
-    for file in Path("../../data/raw-data/heidelberg/heidelberg-xml").iterdir():
+    for file in Path(
+        "../../data/raw-data/heidelberg/heidelberg-xml-manuel-fixed/heidelberg-xml"
+    ).iterdir():
         bounding_boxes = convert_xml_bounding_box_to_bounding_box(file, mzl_dict)
         bounding_boxes.create_ground_truth_txt(destination_path)

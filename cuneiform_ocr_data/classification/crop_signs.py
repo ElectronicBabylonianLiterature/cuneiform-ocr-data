@@ -5,8 +5,8 @@ from pathlib import Path
 import cv2
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
-from cuneiform_ocr_data.classification.utils import build_ebl_dict
-from cuneiform_ocr_data.path import create_directory
+from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
+from cuneiform_ocr_data.utils import create_directory
 
 
 def validate_sign_mapping():
@@ -33,10 +33,12 @@ def hash(string) -> str:
 
 def crop_signs_from_images():
     mapping = build_ebl_dict()
-    path = Path("../../data/processed-data/lmu+heidel-train")
+    path = Path("data/processed-data/ebl+heidelberg/ebl+heidelberg-test")
     images = path / "imgs"
     annotations = path / "annotations"
-    output_imgs = Path("../../data/processed-data/lmu+heidel-train_cropped")
+    output_imgs = Path(
+        "data/processed-data/classification/ebl+heidelberg/ebl+heidelberg-test"
+    )
     create_directory(output_imgs, overwrite=True)
 
     errors = 0

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import requests
 
-from cuneiform_ocr_data.path import create_directory
+from cuneiform_ocr_data.utils import create_directory
 
 
 def get_abz(url):
@@ -31,6 +31,7 @@ def get_signs(url, output):
                 f.write(resp.content)
     if data["next"] is not None:
         get_signs(data["next"], output)
+
 
 def map_to_ABZ(data):
     # iterate through directory
@@ -61,11 +62,9 @@ def map_to_ABZ(data):
                 # copy all data
                 elem.rename(elem.parent / LABASI_ABZ_TO_EBL_ABZ[elem.name])
 
+
 if __name__ == "__main__":
     url = "http://labasi.acdh.oeaw.ac.at/data/api/glyphs/?limit=100&offset=0"
     output = Path("./data")
     create_directory(output, overwrite=True)
     get_signs(url, output)
-
-
-

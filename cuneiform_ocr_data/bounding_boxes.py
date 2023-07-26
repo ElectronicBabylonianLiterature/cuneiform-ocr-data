@@ -5,7 +5,18 @@ import attr
 import pandas as pd
 
 CONTOUR_TYPES = ["SURFACE_AT_LINE", "STRUCT", "COLUMN_AT_LINE", "REVERSE", "OBVERSE"]
-HAS_NO_SIGN = [*CONTOUR_TYPES, "BLANK", "RULING_DOLLAR_LINE", "BOTTOM", "x", "blank", "unknownSign", "unknown", "UnclearSign", "unclear"]
+HAS_NO_SIGN = [
+    *CONTOUR_TYPES,
+    "BLANK",
+    "RULING_DOLLAR_LINE",
+    "BOTTOM",
+    "x",
+    "blank",
+    "unknownSign",
+    "unknown",
+    "UnclearSign",
+    "unclear",
+]
 
 
 class BoundingBox:
@@ -205,5 +216,4 @@ class BoundingBoxesContainer:
     def create_ground_truth_txt(self, path: Optional[Path] = None) -> None:
         gt_filename = Path(f"gt_{self.image_id}.txt")
         path = path / gt_filename if path else gt_filename
-
         self.create_ground_truth_txt_from_file(path)

@@ -1,4 +1,4 @@
-data_root = "data/icdar2015"
+data_root = "cuneiform_ocr_data/data/icdar2015"
 cache_path = "data/cache"
 
 
