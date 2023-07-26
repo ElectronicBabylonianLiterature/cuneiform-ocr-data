@@ -12,11 +12,29 @@
 Make sure PYTHONPATH is root of repository
 
 ## Data
-download TODO and move to `./data`
+download TODO and move to `./data` and unzip (unzip using command line is faster)
+Directory Structure
+```
+data
+  processed-data
+    data-coco
+    data-icdar2015
+    detection
+    ...
+    classification
+      data (after gather_all.py
+      ...
+  raw-data
+    ebl
+    heidelberg
+    jooch
+    urschrei-CDP
+```
+ 		
 
 ## Data Preprocessing for Text Detection (Predict only Bounding Boxes)
 <ol>
-	<li>Preprocessing Heidelberg Data, all Details in `cuneiform_ocr_data/heidelberg` </li>
+	<li>Preprocessing Heidelberg Data, all Details in `cuneiform_ocr_data/heidelberg/README.md` </li>
 	<li>Ebl (our) data in `data/raw-data/ebl` (generally better to create test set from ebl data because quality is better)</li>
 	<ol> 
 		<li>Run `extract_contours.py` with `EXTRACT_AUTMOATICALLY=False` on `data/raw-data/ebl/detection`</li>
