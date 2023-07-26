@@ -12,7 +12,7 @@
 Make sure PYTHONPATH is root of repository
 
 ## Data
-download TODO and move to `./data` and unzip (unzip using command line is faster)
+download [data](https://drive.google.com/drive/folders/1kLDZ1SVJYAuSDjVc7ZpYYz4ZssWu3xpL?usp=sharing) and move to `./data` and unzip (unzip using command line is faster)
 Directory Structure
 ```
 data
