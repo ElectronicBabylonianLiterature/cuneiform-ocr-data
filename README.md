@@ -1,5 +1,5 @@
 # Cuneiform OCR Data Preprocessing for Ebl Project (https://www.ebl.lmu.de/, https://github.com/ElectronicBabylonianLiterature
-# Data+Code is part of **Two-Stage Sign Detection for Cuneiform Tablets** which has been submitted July 2023 (If you use this work/ data please make sure to cite us, we will have it on arvix soon)
+## Data+Code is part of **Two-Stage Sign Detection for Cuneiform Tablets** which has been submitted July 2023 (If you use this work/ data please make sure to cite us, we will have it on arvix soon)
 
 
 ## Installation
