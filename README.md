@@ -12,6 +12,8 @@
 Make sure PYTHONPATH is root of repository
 
 ## Data
+The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
+
 download [data](https://drive.google.com/file/d/1dkHgBBjXnH3gERK7Bcl826cVGFcVYLk0/view?usp=sharing) and move to `./data` and unzip (unzip using command line is faster)
 Directory Structure
 ```
