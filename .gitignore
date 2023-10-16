@@ -20,6 +20,6 @@ work_dirs
 0processed_data
 *.gz
 cuneiform_ocr_data/classification/data
-cuneiform_ocr_data/data-coco
+data/processed-data/data-coco/data-coco
 cuneiform_ocr_data/data
 data.tar.gz

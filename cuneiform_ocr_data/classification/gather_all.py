@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "cuneiform-ocr/cuneiform_ocr_data/classification/data/ebl", overwrite=True
     )
     data_ebl = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg/ebl+heidelberg-train")
+        Path("data/processed-data/classification/ebl+heidelberg-train-cropped")
     )
     data_cdp = prepare_data(
         Path("data/processed-data/classification/urschrei-CDP-processed")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     data = merge_value_list_multiple_dicts(data_ebl, data_cdp, data_jooch, data_labasi)
     data_test = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg/ebl+heidelberg-test")
+        Path("data/processed-data/classification/ebl+heidelberg-test-cropped")
     )
 
     NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     print("Signs: ", len(data.keys()))
     print("Total Data:", len_values(data))
-    MINIMUM_SAMPLE_SIZE = 75
+    MINIMUM_SAMPLE_SIZE = 100
     # only keep signs with more than 50 samples
     data = {k: v for k, v in data.items() if len(v) >= MINIMUM_SAMPLE_SIZE}
     # sort by length of list which is value in dict

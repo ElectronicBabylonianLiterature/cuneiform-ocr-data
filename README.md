@@ -4,7 +4,7 @@
 
 ## Installation
 * requirements.txt (includes opencv-python)
-* `pip3 install torch torchvision  --index-url https://download.pytorch.org/whl/cpu`
+* `pip3 install torch=="2.0.1" torchvision  --index-url https://download.pytorch.org/whl/cpu`
 * `pip install -U openmim`
 * `mim install "mmocr==1.0.0rc5"`  it is important to use this exact version because prepare_data.py won't work in newer versions (DATA_PARSERS are not backward compatible)
 * `mim install "mmcv==2.0.0"`
@@ -14,7 +14,7 @@ Make sure PYTHONPATH is root of repository
 ## Data
 The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
 
-download [data](https://drive.google.com/file/d/1dkHgBBjXnH3gERK7Bcl826cVGFcVYLk0/view?usp=sharing) and move to `./data` and unzip (unzip using command line is faster)
+download [data](https://drive.google.com/file/d/1dkHgBBjXnH3gERK7Bcl826cVGFcVYLk0/view?usp=sharing) and move to `./data` and unzip (unzip using command line is faster `tar -xf data_.tar`)
 Directory Structure
 ```
 data
@@ -72,6 +72,7 @@ Example: 0,0,10,10,KUR
 
 
 ## Data Preprocessing for Image (Sign) Classification (Details)
+0. Use `move_test_set_for_classification.py` to extract all images belonging to detection test set for classification
 1. Images are cropped from LMU and Heidelberg using `crop_signs.py` and converted to ABZ Sign List via ebl.txt mapping from OraccGlobalSignList/ MZL to ABZ Number
    - Partially Broken and Unclear Signs can be dealt included/excluded on parameter in script
 2. Images from CDP (urschrei-cdp) are renamed using the mapping from the urschrei-repo https://github.com/urschrei/CDP/csvs (look at cuneiform_ocr/preprocessing_cdp)
