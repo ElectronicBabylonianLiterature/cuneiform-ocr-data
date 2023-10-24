@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # display_bboxes(img, annotation)
     # quit()
 
-    data_path_str = "data/processed-data/ebl/ebl-detection-extracted-10-23"
+    data_path_str = "data/processed-data/deepscribe"
     data_path = Path(data_path_str)
 
     display_bboxes(data_path)
