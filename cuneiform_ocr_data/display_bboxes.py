@@ -77,6 +77,7 @@ def on_press(image_path: Path):
                 medium_quality.append(image_path.stem)
             elif event.key == "e":
                 bad_quality.append(image_path.stem)
+                delete_corrupt_images_and_annotations(data_path, [image_path.stem])
             files_to_delete.append(image_path.stem)
         plt.close()
 
@@ -158,7 +159,7 @@ if __name__ == "__main__":
     # display_bboxes(img, annotation)
     # quit()
 
-    data_path_str = "data/processed-data/deepscribe"
+    data_path_str = "../data/processed-data/data/processed-data/deepscribe"
     data_path = Path(data_path_str)
 
     display_bboxes(data_path)

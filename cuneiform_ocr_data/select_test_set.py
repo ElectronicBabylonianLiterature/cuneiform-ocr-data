@@ -8,12 +8,12 @@ random.seed(0)
 
 
 if __name__ == "__main__":
-    all_data = Path("data/processed-data/detection/total")
+    all_data = Path("../data/processed-data/data/processed-data/detection/total")
     is_valid_data(all_data)
     # copy data to new folder
     path = all_data.parent / "train"
     shutil.copytree(all_data, path)
-    test_path = Path("data/processed-data/ebl/test")
+    test_path = Path("../data/processed-data/data/processed-data/ebl/test")
     create_directory(test_path / "imgs", overwrite=True)
     create_directory(test_path / "annotations", overwrite=True)
     test_imgs = []

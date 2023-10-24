@@ -84,7 +84,7 @@ def create_coco(anns, imgs, out_path, mapping=None):
 
 
 if __name__ == "__main__":
-    data = Path("data/processed-data/detection/test")
+    data = Path("../data/processed-data/data/processed-data/detection/test")
 
     out_path = Path("cuneiform_ocr_data/data-coco")
     mapping = build_ebl_dict()

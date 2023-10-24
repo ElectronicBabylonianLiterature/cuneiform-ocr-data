@@ -9,8 +9,8 @@ from cuneiform_ocr_data.utils import create_directory
 
 if __name__ == "__main__":
     # can be used to manually validate files and delete bad ones for classification
-    annotations = Path("data/raw-data/deepscribe/imagesWithHotspots.json")
-    output = Path("data/raw-data/deepscribe/annotations")
+    annotations = Path("../data/processed-data/data/raw-data/deepscribe/imagesWithHotspots.json")
+    output = Path("../data/processed-data/data/raw-data/deepscribe/annotations")
     create_directory(output, overwrite=True)
     # open annotations and parse as json
     with open(annotations) as f:

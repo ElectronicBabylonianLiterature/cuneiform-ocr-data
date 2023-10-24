@@ -23,5 +23,5 @@ work_dirs
 *.gz
 cuneiform_ocr_data/classification/data
 data/processed-data/data-coco/data-coco
-cuneiform_ocr_data/data
+data/processed-data/data
 data.tar.gz
