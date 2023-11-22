@@ -13,7 +13,9 @@ classes = ['ABZ579', 'ABZ13', 'ABZ480', 'ABZ70', 'ABZ342', 'ABZ597', 'ABZ461', '
 #classes = [*custom_classes, *not_found_class]
 
 
-def create_coco(anns, imgs, out_path, mapping=None):
+def create_coco(anns, imgs, out_path, mapping=None, test=True):
+    # only have val=test and train
+    name = "val2017" if test is True else "train2017"
     annotations = []
     images = []
 
@@ -68,14 +70,13 @@ def create_coco(anns, imgs, out_path, mapping=None):
     coco_format_json = dict(
         images=images, annotations=annotations, categories=categories
     )
-    create_directory(out_path / "coco" / "val2017")
-    create_directory(out_path / "coco" / "annotations")
+
     # copy all files from imgs to val2017
     for file in imgs.iterdir():
-        shutil.copyfile(file, out_path / "coco" / "val2017" / file.name)
+        shutil.copyfile(file, out_path / "coco" / name / file.name)
 
     with open(
-        out_path / "coco/annotations/instances_val2017.json", "w", encoding="utf-8"
+        out_path / f"coco/annotations/instances_{name}.json", "w", encoding="utf-8"
     ) as f:
         json.dump(coco_format_json, f, ensure_ascii=False, indent=4)
 
@@ -84,9 +85,20 @@ def create_coco(anns, imgs, out_path, mapping=None):
 
 
 if __name__ == "__main__":
-    data = Path("../data/processed-data/data/processed-data/detection/test")
+
+    data_test = Path("data/processed-data/detection/test")
+
+    out_path = Path("cuneiform_ocr_data/data-coco")
+    create_directory(out_path / "coco" / "val2017")
+    create_directory(out_path / "coco" / "train2017")
+    create_directory(out_path / "coco" / "annotations")
+    mapping = build_ebl_dict()
+    # mapping = None
+    create_coco(data_test / "annotations", data_test / "imgs", out_path, mapping)
+
+    data_train = Path("data/processed-data/detection/train")
 
     out_path = Path("cuneiform_ocr_data/data-coco")
     mapping = build_ebl_dict()
     # mapping = None
-    create_coco(data / "annotations", data / "imgs", out_path, mapping)
+    create_coco(data_test / "annotations", data_test / "imgs", out_path, mapping, test=False)

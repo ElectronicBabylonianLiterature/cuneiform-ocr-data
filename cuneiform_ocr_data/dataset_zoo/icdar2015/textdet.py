@@ -12,4 +12,7 @@ data_converter = dict(
     ),
     parser=dict(type="ICDARTxtTextDetAnnParser"),
     dumper=dict(type="JsonDumper"),
+    test_anns=[
+        dict(ann_file='textrecog_test.json')
+    ]
 )
