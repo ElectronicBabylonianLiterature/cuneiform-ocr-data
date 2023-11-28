@@ -85,21 +85,17 @@ def create_coco(anns, imgs, out_path, mapping=None, test=True):
 
 
 if __name__ == "__main__":
-
-    data_test = Path("data/processed-data/detection/test")
-
+    mapping = build_ebl_dict()
+    data_test = Path("data/processed-data/detection/total+deebscribe/test")
     out_path = Path("cuneiform_ocr_data/data-coco")
-    create_directory(out_path, overwrite=True)
+    create_directory("data-coco", overwrite=True)
     create_directory(out_path / "coco" / "val2017")
     create_directory(out_path / "coco" / "train2017")
     create_directory(out_path / "coco" / "annotations")
-    mapping = build_ebl_dict()
-    # mapping = None
+
     create_coco(data_test / "annotations", data_test / "imgs", out_path, mapping)
 
-    data_train = Path("data/processed-data/detection/train")
+    data_train = Path("data/processed-data/detection/total+deebscribe/train")
 
     out_path = Path("cuneiform_ocr_data/data-coco")
-    mapping = build_ebl_dict()
-    # mapping = None
-    create_coco(data_test / "annotations", data_test / "imgs", out_path, mapping, test=False)
+    create_coco(data_test / "annotations", data_train / "imgs", out_path, mapping, test=False)

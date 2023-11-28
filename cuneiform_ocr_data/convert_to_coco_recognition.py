@@ -8,6 +8,8 @@ from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
 from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
 from cuneiform_ocr_data.utils import create_directory
 
+# this is in the mapping apriori
+UNCLEAR_SIGN = "UnclearSign"
 
 def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
     annotations = []
@@ -31,7 +33,7 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
                 category_id = categories.index(bbox.clean_sign)
             except ValueError:
                 print(f"Class {bbox.clean_sign} not found in mapping")
-                category_id = categories.index("unknown")
+                category_id = categories.index(UNCLEAR_SIGN)
 
         coco_ann = dict(
             image_id=counter,
@@ -60,7 +62,8 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
 
 
 def get_categories_from_training_set(annotations, mapping):
-    mapping = mapping | {"unknown": "unknown"}
+    # mapping contains UnclearSigns for unknown signs
+    mapping = mapping
     categories = list(mapping.keys())
     categories.sort()
     categories_counting = {}
@@ -71,15 +74,13 @@ def get_categories_from_training_set(annotations, mapping):
                 category_id = categories.index(bbox.clean_sign)
             except ValueError:
                 print(f"Class {bbox.clean_sign} not found in mapping")
-                category_id = categories.index("unknown")
+                category_id = categories.index(UNCLEAR_SIGN)
             if category_id in categories_counting:
                 categories_counting[category_id] += 1
             else:
                 categories_counting[category_id] = 1
-    categories_counting = {k: v for k, v in categories_counting.items() if v > 100}
+    categories_counting = {k: v for k, v in categories_counting.items() if v > 90}
     categories_with_ids = [{"id": i, "name": categories[cat]} for i, cat in enumerate(categories_counting.keys())]
-    unknown = list(filter(lambda x: x["name"] == "unknown", categories_with_ids))[0]
-    assert unknown is not None
     return [c["name"] for c in categories_with_ids], categories_with_ids
 
 
@@ -94,8 +95,9 @@ if __name__ == "__main__":
 
     categories, categories_with_ids = get_categories_from_training_set(data_train / "annotations", mapping)
 
-
     create_coco(data_train / "annotations", data_train / "imgs", out_path, categories, categories_with_ids, "train2017")
+
+    print([c["name"] for c in categories_with_ids])
 
     data_test = Path("data/processed-data/detection/test")
     create_coco(data_test / "annotations", data_test / "imgs", out_path, categories, categories_with_ids, "val2017")

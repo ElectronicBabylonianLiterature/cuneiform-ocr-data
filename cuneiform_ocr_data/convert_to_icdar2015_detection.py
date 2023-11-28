@@ -15,7 +15,7 @@ from cuneiform_ocr_data.utils import is_valid_data
 
 dataset = "ebl"
 nproc = 4
-task = "textdet"
+task = "textspotting"
 dataset_zoo_path = "cuneiform_ocr_data/dataset_zoo"
 
 @DATA_PARSERS.register_module()
@@ -71,9 +71,10 @@ class EblTxtTextDetAnnParser(BaseParser):
                         if strs in anno[i]:
                             anno[i] = anno[i].replace(strs, "")
             poly = list(map(float, anno[0:4]))
+            text = "".join(anno[4:])
             poly = bbox2poly(poly, "xywh")
             poly = poly.tolist()
-            instances.append(dict(poly=poly, text="Hello", ignore=False, bbox_label=0))
+            instances.append(dict(poly=poly, text=text, ignore=False, bbox_label=0))
         return img_file, instances
 
 
