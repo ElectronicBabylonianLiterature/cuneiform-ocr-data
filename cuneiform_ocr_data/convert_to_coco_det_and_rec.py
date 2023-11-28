@@ -89,6 +89,7 @@ if __name__ == "__main__":
     data_test = Path("data/processed-data/detection/test")
 
     out_path = Path("cuneiform_ocr_data/data-coco")
+    create_directory(out_path, overwrite=True)
     create_directory(out_path / "coco" / "val2017")
     create_directory(out_path / "coco" / "train2017")
     create_directory(out_path / "coco" / "annotations")

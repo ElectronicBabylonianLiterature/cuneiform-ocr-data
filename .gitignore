@@ -1,4 +1,5 @@
 data/processed-data/data-coco
+cuneiform_ocr_data/data-coco
 data.tar
 data
 cross_validation_data
