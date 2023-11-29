@@ -36,9 +36,7 @@ def crop_signs_from_images():
     path = Path("data/processed-data/classification/ebl+heidelberg-test")
     images = path / "imgs"
     annotations = path / "annotations"
-    output_imgs = Path(
-        "data/processed-data/classification/ebl+heidelberg-test-cropped"
-    )
+    output_imgs = Path("data/processed-data/classification/ebl+heidelberg-test-cropped")
     create_directory(output_imgs, overwrite=True)
 
     errors = 0

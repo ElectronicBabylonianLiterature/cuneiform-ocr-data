@@ -6,6 +6,7 @@ from cuneiform_ocr_data.utils import create_directory, is_valid_data
 
 random.seed(0)
 
+
 def parse_filename(elem):
     elem = elem.split(".jpg")[0]
     elem = elem.split("-")
@@ -17,16 +18,21 @@ def parse_filename(elem):
     print(elem)
     return elem
 
+
 if __name__ == "__main__":
     all_data = "data/processed-data/classification/ebl+heidelberg"
     shutil.copytree(all_data, all_data + "-train")
     all_data = Path(all_data + "-train")
-    destination = Path("../data/processed-data/data/processed-data/classification/ebl+heidelberg-test")
+    destination = Path(
+        "../data/processed-data/data/processed-data/classification/ebl+heidelberg-test"
+    )
     create_directory(destination / "annotations", overwrite=True)
     create_directory(destination / "imgs", overwrite=True)
     is_valid_data(all_data)
     # read newline seperated file into a list
-    TEST_IMGS_PATH = Path("../data/processed-data/data/processed-data/detection/test/test_imgs.txt")
+    TEST_IMGS_PATH = Path(
+        "../data/processed-data/data/processed-data/detection/test/test_imgs.txt"
+    )
     with open(TEST_IMGS_PATH) as f:
         test_set = f.read().splitlines()
     # Only keep file stems which means complete image is excluded from train set for classification (could be optimized in future to only exclude the ecxtracted images not the complete images)

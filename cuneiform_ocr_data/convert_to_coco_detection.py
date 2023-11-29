@@ -29,7 +29,6 @@ def create_coco(anns, imgs, out_path, test=True):
         bbox_container = BoundingBoxesContainer.from_file(ann)
 
         for bbox in bbox_container.bounding_boxes:
-
             coco_ann = dict(
                 image_id=counter,
                 id=obj_count,
@@ -64,12 +63,14 @@ def create_coco(anns, imgs, out_path, test=True):
 if __name__ == "__main__":
     data_test = Path("data/processed-data/detection/test")
     out_path = Path("cuneiform_ocr_data/data-coco")
+    # if out_path.exists():
+    # shutil.rmtree(out_path)
     create_directory("data-coco", overwrite=True)
     create_directory(out_path / "coco" / "val2017")
     create_directory(out_path / "coco" / "train2017")
     create_directory(out_path / "coco" / "annotations")
 
-    #create_coco(data_test / "annotations", data_test / "imgs", out_path)
+    create_coco(data_test / "annotations", data_test / "imgs", out_path)
 
     data_train = Path("data/processed-data/detection/train+deebscribe")
 

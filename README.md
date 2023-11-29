@@ -3,7 +3,7 @@
 
 
 ## Installation
-* requirements.txt (includes opencv-python)
+* requirements.txt (optionally: includes opencv-python)
 * `pip3 install torch=="2.0.1" torchvision  --index-url https://download.pytorch.org/whl/cpu`
 * `pip install -U openmim`
 * `mim install "mmocr==1.0.0rc5"`  it is important to use this exact version because prepare_data.py won't work in newer versions (DATA_PARSERS are not backward compatible)
@@ -35,19 +35,24 @@ data
  		
 
 ## Data Preprocessing for Text Detection (Predict only Bounding Boxes)
-<ol>
-	<li>Preprocessing Heidelberg Data, all Details in `cuneiform_ocr_data/heidelberg/README.md` </li>
-	<li>Ebl (our) data in `data/raw-data/ebl` (generally better to create test set from ebl data because quality is better)</li>
-	<ol> 
-		<li>Run `extract_contours.py` with `EXTRACT_AUTMOATICALLY=False` on `data/raw-data/ebl/detection`</li>
-		<li>Run `display_bboxes.py` and use keys to delete all which are not good quality</li>
-	</ol>
- 	<li>Run `select_test_set.py` which will select 50 randomly images from `data/processed-data/ebl/ebl-detection-extracted-deleted` (currently no option to create val set because of small size of 	    dataset)</li>
-  	<li>`data/processed-data/ebl/ebl-detection-extracted-test` has .txt file will names of all images in test set (this will be necessary to create train,test for classification later) </li>
-   	<li>Now merge `data/processed-data/heidelberg/heidelberg-extracted-deleted` and `ebl-detection-extracted-train` which will be your train set (see `data/processed-data/detection`, around 295 		    train and 50 test instances).</li>
-    	<li>Optionally. Create Icdar2015 Style dataset using `convert_to_icdar2015.py`</li>
-        <li>Optionally: Create Coco Style Dataset  `convert_to_coco.py` will create only a test set coco style</li>
-</ol>
+1. Preprocessing Heidelberg Data, all Details in `cuneiform_ocr_data/heidelberg/README.md`
+
+2. Ebl (our) data in `data/raw-data/ebl` (generally better to create test set from ebl data because quality is better) 
+
+    2.1. Run `extract_contours.py` with `EXTRACT_AUTMOATICALLY=False` on `data/raw-data/ebl/detection`
+
+    2.2. Run `display_bboxes.py` and use keys to delete all which are not good quality 
+
+3. Run `select_test_set.py` which will select 50 randomly images from `data/processed-data/ebl/ebl-detection-extracted-deleted` (currently no option to create val set because of small size of dataset) 
+
+4. `data/processed-data/ebl/ebl-detection-extracted-test` has .txt file will names of all images in test set (this will be necessary to create train,test for classification later)  
+
+5. Now merge `data/processed-data/heidelberg/heidelberg-extracted-deleted` and `ebl-detection-extracted-train` which will be your train set (see `data/processed-data/detection`, around 295 train and 50 test instances). 
+
+6. Optionally. Create Icdar2015 Style dataset using `convert_to_icdar2015.py` 
+
+7. Optionally: Create Coco Style Dataset  `convert_to_coco.py` will create only a test set coco style
+
 
 ### Dataformat
 image: P3310-0.jp, with gt_P3310-0.txt.

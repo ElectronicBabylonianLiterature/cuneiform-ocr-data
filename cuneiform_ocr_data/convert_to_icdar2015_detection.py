@@ -18,6 +18,7 @@ nproc = 4
 task = "textspotting"
 dataset_zoo_path = "cuneiform_ocr_data/dataset_zoo"
 
+
 @DATA_PARSERS.register_module()
 class EblTxtTextDetAnnParser(BaseParser):
     """ICDAR Txt Format Text Detection Annotation Parser.
@@ -57,7 +58,6 @@ class EblTxtTextDetAnnParser(BaseParser):
         self.mode = mode
         self.remove_strs = remove_strs
         super().__init__(nproc=nproc)
-
 
     def parse_file(self, file: Tuple, split: str) -> Tuple:
         """Parse single annotation."""

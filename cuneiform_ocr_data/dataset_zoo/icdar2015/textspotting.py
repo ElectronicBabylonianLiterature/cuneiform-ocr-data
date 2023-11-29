@@ -1,5 +1,5 @@
-_base_ = ['textdet.py']
+_base_ = ["textdet.py"]
 
-data_converter = dict(type='TextSpottingDataConverter')
+data_converter = dict(type="TextSpottingDataConverter")
 
-config_generator = dict(type='TextSpottingConfigGenerator')
+config_generator = dict(type="TextSpottingConfigGenerator")

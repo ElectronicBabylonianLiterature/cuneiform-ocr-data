@@ -11,6 +11,7 @@ from cuneiform_ocr_data.utils import create_directory
 # this is in the mapping apriori
 UNCLEAR_SIGN = "UnclearSign"
 
+
 def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
     annotations = []
     images = []
@@ -35,22 +36,21 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
                 print(f"Class {bbox.clean_sign} not found in mapping")
                 category_id = categories.index(UNCLEAR_SIGN)
 
-        coco_ann = dict(
-            image_id=counter,
-            id=obj_count,
-            category_id=category_id,
-            bbox=[bbox.top_left_x, bbox.top_left_y, bbox.width, bbox.height],
-            area=bbox.width * bbox.height,
-            segmentation=[],  # bbox.as_clockwise_coordinates for having bounding box for segmentation too
-            iscrowd=0,
-        )
-        annotations.append(coco_ann)
-        obj_count += 1
+            coco_ann = dict(
+                image_id=counter,
+                id=obj_count,
+                category_id=category_id,
+                bbox=[bbox.top_left_x, bbox.top_left_y, bbox.width, bbox.height],
+                area=bbox.width * bbox.height,
+                segmentation=[],  # bbox.as_clockwise_coordinates for having bounding box for segmentation too
+                iscrowd=0,
+            )
+            annotations.append(coco_ann)
+            obj_count += 1
 
     coco_format_json = dict(
         images=images, annotations=annotations, categories=categories_with_ids
     )
-
     for file in imgs.iterdir():
         shutil.copyfile(file, out_path / "coco" / name / file.name)
 
@@ -58,7 +58,6 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
         out_path / f"coco/annotations/instances_{name}.json", "w", encoding="utf-8"
     ) as f:
         json.dump(coco_format_json, f, ensure_ascii=False, indent=4)
-
 
 
 def get_categories_from_training_set(annotations, mapping):
@@ -80,7 +79,10 @@ def get_categories_from_training_set(annotations, mapping):
             else:
                 categories_counting[category_id] = 1
     categories_counting = {k: v for k, v in categories_counting.items() if v > 90}
-    categories_with_ids = [{"id": i, "name": categories[cat]} for i, cat in enumerate(categories_counting.keys())]
+    categories_with_ids = [
+        {"id": i, "name": categories[cat]}
+        for i, cat in enumerate(categories_counting.keys())
+    ]
     return [c["name"] for c in categories_with_ids], categories_with_ids
 
 
@@ -88,18 +90,34 @@ if __name__ == "__main__":
     mapping = build_ebl_dict()
     data_train = Path("data/processed-data/detection/train")
     out_path = Path("cuneiform_ocr_data/data-coco")
+    if out_path.exists():
+        shutil.rmtree(out_path)
     create_directory(out_path, overwrite=True)
     create_directory(out_path / "coco" / "val2017")
     create_directory(out_path / "coco" / "train2017")
     create_directory(out_path / "coco" / "annotations")
 
-    categories, categories_with_ids = get_categories_from_training_set(data_train / "annotations", mapping)
+    categories, categories_with_ids = get_categories_from_training_set(
+        data_train / "annotations", mapping
+    )
 
-    create_coco(data_train / "annotations", data_train / "imgs", out_path, categories, categories_with_ids, "train2017")
+    create_coco(
+        data_train / "annotations",
+        data_train / "imgs",
+        out_path,
+        categories,
+        categories_with_ids,
+        "train2017",
+    )
 
     print([c["name"] for c in categories_with_ids])
 
     data_test = Path("data/processed-data/detection/test")
-    create_coco(data_test / "annotations", data_test / "imgs", out_path, categories, categories_with_ids, "val2017")
-
-
+    create_coco(
+        data_test / "annotations",
+        data_test / "imgs",
+        out_path,
+        categories,
+        categories_with_ids,
+        "val2017",
+    )

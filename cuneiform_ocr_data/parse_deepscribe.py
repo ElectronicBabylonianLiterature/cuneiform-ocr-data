@@ -9,7 +9,9 @@ from cuneiform_ocr_data.utils import create_directory
 
 if __name__ == "__main__":
     # can be used to manually validate files and delete bad ones for classification
-    annotations = Path("../data/processed-data/data/raw-data/deepscribe/imagesWithHotspots.json")
+    annotations = Path(
+        "../data/processed-data/data/raw-data/deepscribe/imagesWithHotspots.json"
+    )
     output = Path("../data/processed-data/data/raw-data/deepscribe/annotations")
     create_directory(output, overwrite=True)
     # open annotations and parse as json
@@ -19,7 +21,10 @@ if __name__ == "__main__":
     # check annotation
     an = list(filter(lambda x: "acb91e50-" in x["image_id"], annotations))
     for annotation in tqdm(annotations):
-        bboxes = [BoundingBox.from_two_vertices(x["bbox"], "deepscribe")  for x in annotation["annotations"]]
+        bboxes = [
+            BoundingBox.from_two_vertices(x["bbox"], "deepscribe")
+            for x in annotation["annotations"]
+        ]
         bbox_container = BoundingBoxesContainer(annotation["image_id"], bboxes)
         bbox_container.create_ground_truth_txt(output)
     print("Done")
