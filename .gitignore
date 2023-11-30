@@ -26,3 +26,4 @@ cuneiform_ocr_data/classification/data
 data/processed-data/data-coco/data-coco
 data/processed-data/data
 data.tar.gz
+ready-for-training.tar
