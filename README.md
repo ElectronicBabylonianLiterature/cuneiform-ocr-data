@@ -11,6 +11,8 @@
 
 Make sure PYTHONPATH is root of repository
 
+See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdTAxNKPLSRNYb/CuneiformOCR_part1_data.mp4).
+
 ## Data
 The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
 
