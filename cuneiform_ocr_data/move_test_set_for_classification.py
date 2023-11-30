@@ -20,18 +20,18 @@ def parse_filename(elem):
 
 
 if __name__ == "__main__":
-    all_data = "data/processed-data/classification/ebl+heidelberg"
+    all_data = "data/processed-data/ebl+heidelberg"
     shutil.copytree(all_data, all_data + "-train")
     all_data = Path(all_data + "-train")
     destination = Path(
-        "../data/processed-data/data/processed-data/classification/ebl+heidelberg-test"
+        "data/processed-data/ebl+heidelberg-test"
     )
     create_directory(destination / "annotations", overwrite=True)
     create_directory(destination / "imgs", overwrite=True)
     is_valid_data(all_data)
     # read newline seperated file into a list
     TEST_IMGS_PATH = Path(
-        "../data/processed-data/data/processed-data/detection/test/test_imgs.txt"
+        "data/processed-data/detection/without_deebscribe/total/test_imgs.txt"
     )
     with open(TEST_IMGS_PATH) as f:
         test_set = f.read().splitlines()

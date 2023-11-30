@@ -69,7 +69,7 @@ def on_press(image_path: Path):
         elif event.key == "a":
             manuel_fixing.append(image_path.stem)
         elif event.key == "escape":
-            quit()
+            print_stats()
         else:
             if event.key == "q":
                 nearly_finished.append(image_path.stem)
@@ -137,6 +137,17 @@ def show_img(image_path: Path, gt_path: Path) -> None:
     else:
         plot_bbox_with_img(image_path, gt_path)
 
+def print_stats():
+    print("finished")
+    print(finished)
+    print("Nearly finished")
+    print(nearly_finished)
+    print("Medium Quality")
+    print(medium_quality)
+    print("Bad Quality")
+    print(bad_quality)
+    print("Manuel Fixing")
+    print(manuel_fixing)
 
 if __name__ == "__main__":
     """
@@ -159,20 +170,12 @@ if __name__ == "__main__":
     # display_bboxes(img, annotation)
     # quit()
 
-    data_path_str = "../data/processed-data/data/processed-data/deepscribe"
+    data_path_str = "data/processed-data/ebl/ebl-detection-extracted-30-11"
     data_path = Path(data_path_str)
 
     display_bboxes(data_path)
 
-    print("finished")
-    print(finished)
-    print("Nearly finished")
-    print(nearly_finished)
-    print("Medium Quality")
-    print(medium_quality)
-    print("Bad Quality")
-    print(bad_quality)
+    print_stats()
     delete_corrupt_images_and_annotations(data_path, files_to_delete)
-    print("Manuel Fixing")
-    print(manuel_fixing)
+
     # """

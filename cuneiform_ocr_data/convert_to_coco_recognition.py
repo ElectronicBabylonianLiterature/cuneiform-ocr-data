@@ -10,6 +10,7 @@ from cuneiform_ocr_data.utils import create_directory
 
 # this is in the mapping apriori
 UNCLEAR_SIGN = "UnclearSign"
+CUT_OFF = 90
 
 
 def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
@@ -78,7 +79,7 @@ def get_categories_from_training_set(annotations, mapping):
                 categories_counting[category_id] += 1
             else:
                 categories_counting[category_id] = 1
-    categories_counting = {k: v for k, v in categories_counting.items() if v > 90}
+    categories_counting = {k: v for k, v in categories_counting.items() if v > CUT_OFF}
     categories_with_ids = [
         {"id": i, "name": categories[cat]}
         for i, cat in enumerate(categories_counting.keys())
@@ -88,7 +89,7 @@ def get_categories_from_training_set(annotations, mapping):
 
 if __name__ == "__main__":
     mapping = build_ebl_dict()
-    data_train = Path("data/processed-data/detection/train")
+    data_train = Path("data/processed-data/detection/without_deebscribe/train")
     out_path = Path("cuneiform_ocr_data/data-coco")
     if out_path.exists():
         shutil.rmtree(out_path)
@@ -112,7 +113,7 @@ if __name__ == "__main__":
 
     print([c["name"] for c in categories_with_ids])
 
-    data_test = Path("data/processed-data/detection/test")
+    data_test = Path("data/processed-data/detection/without_deebscribe/test")
     create_coco(
         data_test / "annotations",
         data_test / "imgs",

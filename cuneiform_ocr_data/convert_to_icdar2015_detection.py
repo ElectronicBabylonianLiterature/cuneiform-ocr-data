@@ -15,7 +15,7 @@ from cuneiform_ocr_data.utils import is_valid_data
 
 dataset = "ebl"
 nproc = 4
-task = "textspotting"
+task = "textdet"
 dataset_zoo_path = "cuneiform_ocr_data/dataset_zoo"
 
 
@@ -138,8 +138,8 @@ def prepare_data(data_path, output_path, test_set):
 
 
 if __name__ == "__main__":
-    data_path = Path("data/processed-data/detection/total")
-    test_set_path = Path("data/processed-data/detection/test/test_imgs.txt")
+    data_path = Path("data/processed-data/detection/without_deebscribe/total")
+    test_set_path = Path("data/processed-data/detection/without_deebscribe/test/test_imgs.txt")
     # read newline seperated txt file and save to list
     with open(test_set_path, "r") as f:
         test_set = f.read().splitlines()

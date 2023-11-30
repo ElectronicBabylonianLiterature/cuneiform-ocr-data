@@ -70,9 +70,9 @@ if __name__ == "__main__":
     """
 
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("../data/processed-data/data/raw-data/ebl-lmu-10-23")
+    input_data = Path("data/raw-data/ebl/detection-11-30")
     output_data_path = Path(
-        "../data/processed-data/data/processed-data/ebl/ebl-detection-extracted-10-23"
+        "data/processed-data/ebl/ebl-detection-extracted-30-11"
     )
 
     input_annotations_folder = input_data / "annotations"

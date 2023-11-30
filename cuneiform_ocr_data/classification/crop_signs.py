@@ -33,10 +33,10 @@ def hash(string) -> str:
 
 def crop_signs_from_images():
     mapping = build_ebl_dict()
-    path = Path("data/processed-data/classification/ebl+heidelberg-test")
+    path = Path("data/processed-data/ebl+heidelberg-train")
     images = path / "imgs"
     annotations = path / "annotations"
-    output_imgs = Path("data/processed-data/classification/ebl+heidelberg-test-cropped")
+    output_imgs = Path("data/processed-data/ebl+heidelberg-train-cropped")
     create_directory(output_imgs, overwrite=True)
 
     errors = 0
