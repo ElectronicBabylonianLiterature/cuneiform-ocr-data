@@ -10,9 +10,11 @@ random.seed(0)
 def parse_filename(elem):
     elem = elem.split(".jpg")[0]
     elem = elem.split("-")
+    if len(elem[0]) <= 2:     #for Sp-III-947.jpg
+        elem = "-".join(elem)
+        return elem
     if len(elem) > 1:
         elem = "-".join(elem[:-1])
-
     else:
         elem = elem[0]
     print(elem)
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     is_valid_data(all_data)
     # read newline seperated file into a list
     TEST_IMGS_PATH = Path(
-        "data/processed-data/detection/without_deebscribe/total/test_imgs.txt"
+        "data/processed-data/detection/test/test_imgs.txt"
     )
     with open(TEST_IMGS_PATH) as f:
         test_set = f.read().splitlines()

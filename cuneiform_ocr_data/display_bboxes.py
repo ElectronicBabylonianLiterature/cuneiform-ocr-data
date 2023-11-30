@@ -122,6 +122,7 @@ def plot_bbox_with_img(image_path: Path, gt_path: Path) -> None:
             alpha=0.5,
         )
     plt.title(image_path)
+    fig.set_size_inches(20, 20)
     fig.canvas.manager.set_window_title(image_path)
     plt.show()
 
@@ -161,16 +162,12 @@ if __name__ == "__main__":
     """
 
     # Display single image + annotations
-    # img = Path(
-    # "/home/yunus/PycharmProjects/cuneiform-ocr-data2/data/processed-data/heidelberg/heidelberg/imgs/P336009.jpg"
-    # )
-    # annotation = Path(
-    # "/home/yunus/PycharmProjects/cuneiform-ocr-data2/data/processed-data/heidelberg/heidelberg/annotations/gt_P336009.txt"
-    # )
+    # img = "data/processed-data/ebl/ebl-detection-extracted-30-11/imgs/MLC_1874-2"
+    # annotation = "data/processed-data/ebl/ebl-detection-extracted-30-11/annotations/MLC_1874-2"
     # display_bboxes(img, annotation)
     # quit()
 
-    data_path_str = "data/processed-data/ebl/ebl-detection-extracted-30-11"
+    data_path_str = "data/processed-data/ebl/ebl-detection-extracted-30-11/imgs/MLC_1874-2"
     data_path = Path(data_path_str)
 
     display_bboxes(data_path)

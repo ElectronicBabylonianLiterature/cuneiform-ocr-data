@@ -138,8 +138,8 @@ def prepare_data(data_path, output_path, test_set):
 
 
 if __name__ == "__main__":
-    data_path = Path("data/processed-data/detection/without_deebscribe/total")
-    test_set_path = Path("data/processed-data/detection/without_deebscribe/test/test_imgs.txt")
+    data_path = Path("data/processed-data/detection/deebscribe/total")
+    test_set_path = Path("data/processed-data/detection/test/test_imgs.txt")
     # read newline seperated txt file and save to list
     with open(test_set_path, "r") as f:
         test_set = f.read().splitlines()

@@ -89,7 +89,7 @@ def get_categories_from_training_set(annotations, mapping):
 
 if __name__ == "__main__":
     mapping = build_ebl_dict()
-    data_train = Path("data/processed-data/detection/without_deebscribe/train")
+    data_train = Path("data/processed-data/detection/train")
     out_path = Path("cuneiform_ocr_data/data-coco")
     if out_path.exists():
         shutil.rmtree(out_path)
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     print([c["name"] for c in categories_with_ids])
 
-    data_test = Path("data/processed-data/detection/without_deebscribe/test")
+    data_test = Path("data/processed-data/detection/test")
     create_coco(
         data_test / "annotations",
         data_test / "imgs",

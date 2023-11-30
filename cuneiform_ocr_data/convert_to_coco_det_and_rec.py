@@ -8,7 +8,7 @@ from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
 from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
 from cuneiform_ocr_data.utils import create_directory
 
-classes = ['ABZ13', 'ABZ579', 'ABZ480', 'ABZ70', 'ABZ597', 'ABZ342', 'ABZ461', 'ABZ61', 'ABZ381', 'ABZ142', 'ABZ1', 'ABZ318', 'ABZ231', 'ABZ449', 'ABZ533', 'ABZ75', 'ABZ354', 'ABZ545', 'ABZ536', 'ABZ139', 'ABZ330', 'ABZ308', 'ABZ15', 'ABZ86', 'ABZ328', 'ABZ214', 'ABZ73', 'ABZ295', 'ABZ55', 'ABZ296', 'ABZ371', 'ABZ537', 'ABZ151', 'ABZ335', 'ABZ68', 'ABZ5', 'ABZ411', 'ABZ69', 'ABZ366', 'ABZ457', 'ABZ396', 'ABZ324', 'ABZ353', 'ABZ84', 'ABZ99', 'ABZ206', 'ABZ58', 'ABZ376', 'ABZ384', 'ABZ532', 'ABZ334', 'ABZ383', 'ABZ74', 'ABZ399', 'ABZ59', 'ABZ145', 'ABZ367', 'ABZ7', 'ABZ586', 'ABZ589', 'ABZ211', 'ABZ52', 'ABZ97', 'ABZ144', 'ABZ212', 'ABZ319', 'ABZ78', 'ABZ343', 'ABZ465', 'ABZ85', 'ABZ115', 'ABZ207', 'ABZ331', 'ABZ570', 'ABZ38', 'ABZ427', 'ABZ322', 'ABZ60', 'ABZ314', 'ABZ79', 'ABZ80', 'ABZ142a', 'ABZ232', 'ABZ535', 'ABZ112', 'ABZ554', 'ABZ339', 'ABZ279', 'ABZ172', 'ABZ575', 'ABZ6', 'ABZ595', 'ABZ148', 'ABZ230', 'ABZ468', 'ABZ128', 'ABZ306', 'ABZ12', 'ABZ312', 'ABZ134', 'ABZ147', 'ABZ104', 'ABZ397', 'ABZ331e+152i', 'ABZ441', 'ABZ111', 'ABZ2', 'ABZ412', 'ABZ167', 'ABZ62', 'ABZ455', 'ABZ313', 'ABZ472', 'ABZ401', 'ABZ471', 'ABZ72', 'ABZ538', 'ABZ440', 'ABZ101', 'ABZ143', 'ABZ50', 'ABZ483', 'ABZ94', 'ABZ393', 'ABZ437', 'ABZ298', 'ABZ205', 'ABZ559', 'ABZ164', 'ABZ565', 'ABZ87', 'ABZ126', 'ABZ307', 'ABZ138', 'ABZ152', 'ABZ195', 'ABZ191', 'ABZ124']
+classes = ['ABZ579', 'ABZ13', 'ABZ480', 'ABZ70', 'ABZ597', 'ABZ342', 'ABZ461', 'ABZ381', 'ABZ1', 'ABZ61', 'ABZ142', 'ABZ318', 'ABZ231', 'ABZ533', 'ABZ449', 'ABZ75', 'ABZ354', 'ABZ139', 'ABZ545', 'ABZ536', 'ABZ330', 'ABZ308', 'ABZ15', 'ABZ86', 'ABZ73', 'ABZ214', 'ABZ328', 'ABZ55', 'ABZ296', 'ABZ371', 'ABZ68', 'ABZ295', 'ABZ537', 'ABZ411', 'ABZ457', 'ABZ5', 'ABZ335', 'ABZ151', 'ABZ69', 'ABZ366', 'ABZ396', 'ABZ324', 'ABZ99', 'ABZ206', 'ABZ353', 'ABZ84', 'ABZ532', 'ABZ384', 'ABZ58', 'ABZ376', 'ABZ59', 'ABZ74', 'ABZ334', 'ABZ399', 'ABZ97', 'ABZ52', 'ABZ586', 'ABZ7', 'ABZ211', 'ABZ145', 'ABZ383', 'ABZ589', 'ABZ367', 'ABZ319', 'ABZ343', 'ABZ85', 'ABZ144', 'ABZ570', 'ABZ78', 'ABZ115', 'ABZ212', 'ABZ207', 'ABZ465', 'ABZ322', 'ABZ112', 'ABZ38', 'ABZ331', 'ABZ427', 'ABZ60', 'ABZ79', 'ABZ80', 'ABZ314', 'ABZ142a', 'ABZ595', 'ABZ232', 'ABZ535', 'ABZ279', 'ABZ172', 'ABZ312', 'ABZ6', 'ABZ554', 'ABZ230', 'ABZ128', 'ABZ468', 'ABZ167', 'ABZ401', 'ABZ575', 'ABZ12', 'ABZ313', 'ABZ148', 'ABZ339', 'ABZ104', 'ABZ331e+152i', 'ABZ472', 'ABZ306', 'ABZ134', 'ABZ2', 'ABZ441', 'ABZ412', 'ABZ147', 'ABZ471', 'ABZ397', 'ABZ62', 'ABZ111', 'ABZ455', 'ABZ72', 'ABZ538', 'ABZ143', 'ABZ101', 'ABZ440', 'ABZ437', 'ABZ393', 'ABZ298', 'ABZ50', 'ABZ483', 'ABZ559', 'ABZ87', 'ABZ94', 'ABZ152', 'ABZ138', 'ABZ164', 'ABZ565', 'ABZ205', 'ABZ598a', 'ABZ307', 'ABZ9', 'ABZ398', 'ABZ191', 'ABZ126', 'ABZ124', 'ABZ195', 'ABZ470', 'ABZ131', 'ABZ375', 'ABZ56', 'ABZ556', 'ABZ170']
 # not_found_class = ["unknown"]
 # classes = [*custom_classes, *not_found_class]
 
@@ -86,7 +86,7 @@ def create_coco(anns, imgs, out_path, mapping=None, test=True):
 
 if __name__ == "__main__":
     mapping = build_ebl_dict()
-    data_test = Path("data/processed-data/detection/without_deebscribe/test")
+    data_test = Path("data/processed-data/detection/test")
     out_path = Path("cuneiform_ocr_data/data-coco")
     create_directory("data-coco", overwrite=True)
     create_directory(out_path / "coco" / "val2017")

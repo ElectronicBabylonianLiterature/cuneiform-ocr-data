@@ -70,7 +70,7 @@ if __name__ == "__main__":
     """
 
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("data/raw-data/ebl/detection-11-30")
+    input_data = Path("data/raw-data/ebl/detection")
     output_data_path = Path(
         "data/processed-data/ebl/ebl-detection-extracted-30-11"
     )

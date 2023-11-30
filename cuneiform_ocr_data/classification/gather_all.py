@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "cuneiform-ocr/cuneiform_ocr_data/classification/data/ebl", overwrite=True
     )
     data_ebl = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg-train-cropped")
+        Path("data/processed-data/classification/ebl+heidelberg-train")
     )
     data_cdp = prepare_data(
         Path("data/processed-data/classification/urschrei-CDP-processed")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     data = merge_value_list_multiple_dicts(data_ebl, data_cdp, data_jooch, data_labasi)
     data_test = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg-test-cropped")
+        Path("data/processed-data/classification/ebl+heidelberg-test")
     )
 
     NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]

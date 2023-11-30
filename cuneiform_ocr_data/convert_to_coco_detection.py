@@ -61,7 +61,7 @@ def create_coco(anns, imgs, out_path, test=True):
 
 
 if __name__ == "__main__":
-    data_test = Path("data/processed-data/detection/without_deebscribe/test")
+    data_test = Path("data/processed-data/detection/test")
     out_path = Path("cuneiform_ocr_data/data-coco")
     # if out_path.exists():
     # shutil.rmtree(out_path)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     create_coco(data_test / "annotations", data_test / "imgs", out_path)
 
-    data_train = Path("data/processed-data/detection/without_deebscribe/train")
+    data_train = Path("data/processed-data/detection/train")
 
     out_path = Path("cuneiform_ocr_data/data-coco")
     create_coco(data_train / "annotations", data_train / "imgs", out_path, test=False)
