@@ -16,7 +16,7 @@ See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdT
 ## Data
 The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
 
-download [data](https://drive.google.com/file/d/18bG-PgXUBoJrb3UyhfUFvGaNXLum-dn-/view?usp=sharing) and move to `./data` and unzip (unzip using command line is faster `tar -xf data_.tar`)
+download [data](https://syncandshare.lrz.de/getlink/fiNYZj1KRbJdVfHQeJMsAG/data.tar) and move to `./data` and unzip (unzip using command line is faster `tar -xf data_.tar`)
 Directory Structure
 ```
 data
