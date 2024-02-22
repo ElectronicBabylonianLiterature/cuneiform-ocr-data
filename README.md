@@ -16,7 +16,7 @@ See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdT
 ## Data
 The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
 
-download [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601)  raw-data and processed-data according to instructions below.
+download [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601)  raw-data and processed-data according to instructions below. This code will use raw-data and processed-data and output the data as in ready-for-training (i.e. icdar2015 and coco2017 format) (see in zenodoo ready-for-training.tar.gz). 
 Directory Structure
 ```
 data
