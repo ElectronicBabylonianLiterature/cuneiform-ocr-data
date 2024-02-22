@@ -1,5 +1,5 @@
 # Cuneiform OCR Data Preprocessing for Ebl Project (https://www.ebl.lmu.de/, https://github.com/ElectronicBabylonianLiterature
-## Data+Code is part of **Two-Stage Sign Detection for Cuneiform Tablets** which has been submitted July 2023 (If you use this work/ data please make sure to cite us, we will have it on arvix soon)
+Data+Code is part of Paper **Sign Detection for Cuneiform Tablets from Yunus Cobanoglu, Luis Sáenz, Ilya Khait, Enrique Jiménez** please contact us for access to data on Zenodoo and paper as it is under currently under review.
 
 
 ## Installation
@@ -16,7 +16,7 @@ See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdT
 ## Data
 The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`
 
-download [data](https://syncandshare.lrz.de/getlink/fiNYZj1KRbJdVfHQeJMsAG/data.tar) and move to `./data` and unzip (unzip using command line is faster `tar -xf data_.tar`)
+download [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601)  raw-data and processed-data according to instructions below.
 Directory Structure
 ```
 data
