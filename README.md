@@ -1,5 +1,8 @@
 # Cuneiform OCR Data Preprocessing for Ebl Project (https://www.ebl.lmu.de/, https://github.com/ElectronicBabylonianLiterature
-Data+Code is part of Paper **Sign Detection for Cuneiform Tablets from Yunus Cobanoglu, Luis Sáenz, Ilya Khait, Enrique Jiménez** please contact us for access to data on Zenodoo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601) and paper as it is under currently under review. See [https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md) for overview and general information of all repositories associated with the paper from above.
+Data+Code is part of Paper [Sign Detection for Cuneiform Tablets from Yunus Cobanoglu, Luis Sáenz, Ilya Khait, Enrique Jiménez](https://www.degruyter.com/document/doi/10.1515/itit-2024-0028/html). <br/>
+Data on Zenodoo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601).
+
+See [https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md) for overview and general information of all repositories associated with the paper from above.
 
 
 ## Installation
@@ -98,4 +101,18 @@ Example: 0,0,10,10,KUR
 - Labasi Project https://labasi.acdh.oeaw.ac.at/
 - CDP Project https://github.com/urschrei/CDP
 - LMU https://www.ebl.lmu.de/
+
+## Cite this paper
+```
+@article{CobanogluSáenzKhaitJiménez+2024,
+url = {https://doi.org/10.1515/itit-2024-0028},
+title = {Sign detection for cuneiform tablets},
+title = {},
+author = {Yunus Cobanoglu and Luis Sáenz and Ilya Khait and Enrique Jiménez},
+journal = {it - Information Technology},
+doi = {doi:10.1515/itit-2024-0028},
+year = {2024},
+lastchecked = {2024-06-01}
+}
+```
 
