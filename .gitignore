@@ -27,4 +27,6 @@ data/processed-data/data-coco/data-coco
 data/processed-data/data
 data.tar.gz
 ready-for-training.tar
-.json
+*.json
+.env
+cmds.txt
