@@ -1,13 +1,12 @@
-from pymongo import MongoClient
+# standard imports
 import os
+# package imports
 from dotenv import load_dotenv
-
+from pymongo import MongoClient
+########################################################
 load_dotenv()
-
-mongodb_uri = os.getenv('MONGODB_URI', '')
-client = MongoClient(mongodb_uri)
-db = client['ebl']
-fragments = db['fragments']
-
-# find fragments with no transliteration
-empty_fragments = fragments.find({"text.lines.0": {"$exists": False}})
+def get_connection():
+    """Return MongoClient"""
+    mongodb_uri = os.getenv('MONGODB_URI', '')
+    client = MongoClient(mongodb_uri)
+    return client
