@@ -9,5 +9,6 @@ attrs
 xlrd
 torch
 numpy<2
+Pillow
 pymongo
 

@@ -30,3 +30,4 @@ ready-for-training.tar
 *.json
 .env
 cmds.txt
+tags
