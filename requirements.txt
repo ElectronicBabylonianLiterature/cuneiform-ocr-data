@@ -11,4 +11,4 @@ torch
 numpy<2
 Pillow
 pymongo
-
+tqdm

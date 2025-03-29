@@ -31,3 +31,4 @@ ready-for-training.tar
 .env
 cmds.txt
 tags
+activate_venv.sh

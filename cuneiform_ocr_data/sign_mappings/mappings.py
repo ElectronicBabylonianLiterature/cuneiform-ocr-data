@@ -28,3 +28,16 @@ def build_mzl_dict():
         sign, number = elem[0].split(" ")
         mzl_dict[number] = sign
     return mzl_dict
+
+def build_abz_dict():
+    mapping = pd.read_csv(
+        Path(Path(__file__).resolve().parent / "ebl.txt"),
+        header=None,
+        delimiter=" ",
+        keep_default_na=False,
+    ).values.tolist()
+    mapping_dict = dict()
+    for elem in mapping:
+        sign, abz, _ = elem
+        mapping_dict[abz] = sign
+    return mapping_dict
