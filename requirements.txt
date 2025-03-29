@@ -12,3 +12,5 @@ numpy<2
 Pillow
 pymongo
 tqdm
+shapely
+geopandas
