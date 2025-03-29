@@ -3,6 +3,7 @@ import os
 import json
 import base64
 from io import BytesIO
+
 # package imports
 from pymongo import ReturnDocument
 from PIL import Image
@@ -10,10 +11,11 @@ import gridfs
 from tqdm import tqdm
 import geopandas as gpd
 from shapely.geometry import box
+
 # local imports
 from connection import get_connection
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
-from models.models import SignCoordinates
+from models.models import SignCoordinates, Coordinates
 ########################################################
 Image.MAX_IMAGE_PIXELS = 300000000
 JSON_FILE_NAME = "eBL_OCRed_Signs.json"
@@ -49,7 +51,7 @@ def match_signs_from_annotations(annotations_fragment, ocr_signs_item_to_match: 
     annotated_signs_coordinates = [SignCoordinates(i, obj["data"]["signName"], obj["geometry"])._asdict() for i, obj in enumerate(annotations_list)]
 
     ocr_signs_array = ocr_signs_item_to_match["ocredSigns"].split()
-    ocr_signs_coordinates = [SignCoordinates(i, sign, ocr_signs_item_to_match["ocredSignsCoordinates"][i])._asdict() for i, sign in enumerate(ocr_signs_array)]
+    ocr_signs_coordinates = [SignCoordinates(i, sign, Coordinates(*ocr_signs_item_to_match["ocredSignsCoordinates"][i])._asdict())._asdict() for i, sign in enumerate(ocr_signs_array)]
 
     join_df = join_signs_spatially(annotated_signs_coordinates, ocr_signs_coordinates)
     # TODO: convert join_df to filtered_ocr_signs_coordinates
@@ -76,13 +78,12 @@ def retrieve_image_from_filename(file_name, db):
     return image
 
 def join_signs_spatially(annotated_signs_coordinates, ocr_signs_coordinates):
-    breakpoint()
-    gdf_annotated = gpd.GeoDataFrame(annotated_signs_coordinates, geometry=[box(d["x"], d["y"], d["x"] + d["width"], d["y"] + d["height"]) for d in list1], crs="EPSG:4326")
-    gdf_ocr = gpd.GeoDataFrame(ocr_signs_coordinates, geometry=[box(d["x"], d["y"], d["x"] + d["width"], d["y"] + d["height"]) for d in list1], crs="EPSG:4326")
+    gdf_annotated = gpd.GeoDataFrame(annotated_signs_coordinates, geometry=[box(d["coordinates"]["x"], d["coordinates"]["y"], d["coordinates"]["x"] + d["coordinates"]["width"], d["coordinates"]["y"] + d["coordinates"]["height"]) for d in annotated_signs_coordinates], crs="EPSG:4326")
+    gdf_ocr = gpd.GeoDataFrame(ocr_signs_coordinates, geometry=[box(d["coordinates"]["x"], d["coordinates"]["y"], d["coordinates"]["x"] + d["coordinates"]["width"], d["coordinates"]["y"] + d["coordinates"]["height"]) for d in ocr_signs_coordinates], crs="EPSG:4326")
 
+    # TODO: convert the smaller coord system in annotated_signs_coordinates to the larger pixel coordinates!
     joined = gpd.sjoin(gdf_annotated, gdf_ocr, how="inner", predicate="intersects")
 
-    breakpoint()
     significant_overlaps = filter_df_by_overlap_threshold(joined, gdf_ocr)
     breakpoint()
 
@@ -102,7 +103,7 @@ def filter_df_by_overlap_threshold(joined, gdf2):
 
         if iou > iou_threshold:
             significant_overlaps.append((*row, iou))
-    return significant overlaps
+    return significant_overlaps
 
 def sort_cropped_signs(db, fragments_to_match, metadata_list, abz_sign_dict):
     """Crop desired signs in image, then save sign extracts with source file_name and position of signs."""
@@ -111,7 +112,6 @@ def sort_cropped_signs(db, fragments_to_match, metadata_list, abz_sign_dict):
         file_name = f"{fragment_name}.jpg"
         ocr_signs_item_to_match = ocr_signs_dict.get(file_name)
         if not ocr_signs_item_to_match: continue
-
         annotations_fragment = db["annotations"].find_one({"fragmentNumber": fragment_name})
         filtered_signs_coordinates= match_signs_from_annotations(annotations_fragment, ocr_signs_item_to_match)
 

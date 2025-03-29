@@ -5,3 +5,8 @@ class SignCoordinates(NamedTuple):
     sign: str
     coordinates: dict
 
+class Coordinates(NamedTuple):
+    x: int
+    y: int
+    width: int
+    height: int
