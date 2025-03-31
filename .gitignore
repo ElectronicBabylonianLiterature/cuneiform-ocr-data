@@ -32,4 +32,4 @@ ready-for-training.tar
 cmds.txt
 tags
 activate_venv.sh
-old_data
+naive_data
