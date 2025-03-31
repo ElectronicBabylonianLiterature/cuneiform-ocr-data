@@ -18,5 +18,5 @@ def load_json_metadata():
 
 if __name__ == '__main__':
     metadata = load_json_metadata()
-    stats, summary = generate_statistics(metadata )
+    stats, summary = generate_statistics(metadata)
     breakpoint()
