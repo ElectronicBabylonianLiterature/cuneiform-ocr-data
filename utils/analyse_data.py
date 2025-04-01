@@ -12,11 +12,13 @@ def generate_statistics(metadata):
     return stats, summary
 
 def load_json_metadata():
-    with open("naive_data/crops_metadata.json", "r", encoding="utf-8") as f:
+    with open("data/crops_metadata.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         return data
 
 if __name__ == '__main__':
     metadata = load_json_metadata()
     stats, summary = generate_statistics(metadata)
+    print(stats)
+    print(summary)
     breakpoint()
