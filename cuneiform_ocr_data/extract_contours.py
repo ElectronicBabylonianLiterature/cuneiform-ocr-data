@@ -5,6 +5,7 @@ from typing import List
 from datetime import datetime
 import cv2
 import numpy as np
+import json
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer, BoundingBox
 from cuneiform_ocr_data.utils import create_directory
@@ -81,12 +82,19 @@ if __name__ == "__main__":
     output_imgs = output_data_path / "imgs"
     output_annotations = output_data_path / "annotations"
 
+    valid_fragments = []
+    with open(f"{input_data}/valid_fragments.json") as json_data:
+        valid_fragments = json.load(json_data)
+
     create_directory(output_data_path, overwrite=True)
     create_directory(output_imgs)
     create_directory(output_annotations)
 
-    images = list(input_imgs_folder.iterdir())
-    annotations = list(input_annotations_folder.iterdir())
+
+    images = [img for img in list(input_imgs_folder.iterdir()) if img.stem in valid_fragments]
+    annotations = [annot for annot in list(input_annotations_folder.iterdir()) if annot.stem.replace("gt_", "").replace(".txt", "") in valid_fragments]
+    breakpoint()
+
     for counter, image_path in enumerate(images):
         print(f"{counter} of {len(images)}")
         annotation_file = next(
@@ -108,7 +116,7 @@ if __name__ == "__main__":
                 "traceback": traceback.format_exc()
             }
 
-            with open("error_log_extract_contours.json", "a") as f:
+            with open(f"{output_data_path}/error_log_extract_contours.json", "a") as f:
                 json.dump(error_info, f, indent=4)
 
         if EXTRACT_CONTOURS_AUTOMATICALLY:
