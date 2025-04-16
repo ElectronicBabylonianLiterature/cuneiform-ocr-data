@@ -2,7 +2,7 @@
 import shutil
 from pathlib import Path
 from typing import List
-
+from datetime import datetime
 import cv2
 import numpy as np
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     EXTRACT_CONTOURS_AUTOMATICALLY = False
     input_data = Path("data/raw-data/ebl/detection")
     output_data_path = Path(
-        "data/processed-data/ebl/ebl-detection-extracted-30-11"
+        f"data/processed-data/ebl/ebl-detection-extracted-{datetime.today().strftime('%d-%m-%y')}"
     )
 
     input_annotations_folder = input_data / "annotations"
@@ -94,7 +94,22 @@ if __name__ == "__main__":
         )
         if annotation_file is None:
             raise Exception("Not found annotations for image:", image_path.name)
-        bounding_boxes_container = BoundingBoxesContainer.from_file(annotation_file)
+
+        bounding_boxes_container = None 
+        try:
+            bounding_boxes_container = BoundingBoxesContainer.from_file(annotation_file)
+        except Exception as e:
+            import traceback
+            import json
+            error_info = {
+                "annotation_file": str(annotation_file),
+                "type": type(e).__name__,
+                "message": str(e),
+                "traceback": traceback.format_exc()
+            }
+
+            with open("error_log_extract_contours.json", "a") as f:
+                json.dump(error_info, f, indent=4)
 
         if EXTRACT_CONTOURS_AUTOMATICALLY:
             image = cv2.imread(str(image_path))
