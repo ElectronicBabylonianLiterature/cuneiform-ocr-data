@@ -30,11 +30,10 @@ def hash(string) -> str:
     return str(hasher.hexdigest())
 
 
-def crop_signs_from_images(mapping, test_files_path, exclude_partially_broken=True):
+def crop_signs_from_images(mapping, test_files_path, output_img_folder, exclude_partially_broken=True):
     path = Path(test_files_path)
     images = path / "imgs"
     annotations = path / "annotations"
-    output_img_folder = "ebl-test"
     output_imgs = Path(f"data/processed-data/classification/{output_img_folder}")
     create_directory(output_imgs, overwrite=True)
 
@@ -81,7 +80,8 @@ def crop_signs_from_images(mapping, test_files_path, exclude_partially_broken=Tr
 
 if __name__ == "__main__":
     mapping = build_ebl_dict()
-    test_files_path = "data/processed-data/ebl/ebl-detection-extracted-17-04-25/test"
+    test_files_path = "data/processed-data/ebl/ebl-detection-extracted-17-04-25/train"
+    output_img_folder = "ebl-train"
     # validate_sign_mapping(mapping, test_files_path)
     exclude_partially_broken = True
-    crop_signs_from_images(mapping, test_files_path, exclude_partially_broken)
+    crop_signs_from_images(mapping, test_files_path, output_img_folder, exclude_partially_broken)
