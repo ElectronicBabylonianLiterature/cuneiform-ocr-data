@@ -96,7 +96,7 @@ def filter_df_by_overlap_threshold(joined, gdf2):
 
 def sort_cropped_signs(db, fragments_to_match, metadata_list, abz_sign_dict):
     """Crop desired signs in image, then save sign extracts with source file_name and position of signs."""
-    for fragment in tqdm(fragments_to_match[18371:]):
+    for fragment in tqdm(fragments_to_match):
         fragment_name = fragment.get('_id')
         file_name = f"{fragment_name}.jpg"
         ocr_signs_item_to_match = ocr_signs_dict.get(file_name)
