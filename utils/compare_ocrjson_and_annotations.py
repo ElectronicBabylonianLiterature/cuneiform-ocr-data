@@ -13,10 +13,9 @@ from shapely.geometry import box
 from connection import get_connection
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
 from models.models import SignCoordinates, Coordinates
-from extract_data import get_annotated_fragments_ids, return_fragments_to_match
+from retrieve_sign_from_abz import convert_abz_array_to_sign_name_array
+from extract_data import get_annotated_fragments_ids, return_fragments_to_match, JSON_FILE_NAME
 ########################################################
-JSON_FILE_NAME = "eBL_OCRed_Signs.json"
-
 
 def read_json_file():
     with open(JSON_FILE_NAME) as f:
@@ -58,6 +57,7 @@ if __name__ == '__main__':
 
     # loop through OCRed signs to annotated sign 
     ocr_signs_array = read_json_file()
+    ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
     folder_path = os.path.join(os.getcwd(),folder)
 
@@ -65,6 +65,11 @@ if __name__ == '__main__':
         if 'json' in foldername: continue
         print(foldername)
         for jpg in os.listdir(os.path.join(folder_path, foldername)):
-            breakpoint()
             sign_name, fragment_number, index_in_ocred_json = jpg.split('.jpg')[0].split('_')
+            # goal: check signs property (i.e. the transliteration) in Fragments and see if sign in OCRed_Signs.json is in the transliteration
+
+            # get ocredSigns 
+            ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
+            sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
             breakpoint()
+            
