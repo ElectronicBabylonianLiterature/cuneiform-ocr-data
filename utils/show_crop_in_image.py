@@ -26,7 +26,8 @@ if __name__ == '__main__':
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
     photo_file_name = "K.13973.jpg"
-    coordinates = get_coordinates_for_cropped_sign(photo_file_name, 0, ocr_signs_dict)
+    index = 0
+    coordinates = get_coordinates_for_cropped_sign(photo_file_name, index, ocr_signs_dict)
     image = get_image_from_file_name(photo_file_name, db)
     if image:
         crop = crop_image(image, coordinates)
