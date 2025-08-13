@@ -9,21 +9,18 @@ from pymongo import ReturnDocument
 from PIL import Image
 import gridfs
 from tqdm import tqdm
-import geopandas as gpd
-from shapely.geometry import box
 
 # local imports
 from connection import get_connection
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
-from models.models import SignCoordinates, Coordinates
 ########################################################
 Image.MAX_IMAGE_PIXELS = 400000000
 JSON_FILE_NAME = "eBL_OCRed_Signs.json"
 
-def get_annotated_fragments_ids(fragments_collection):
+def get_annotated_fragments_ids(annotations):
     """Get fragment ids in a Python set"""
     annotated_fragments_ids = set()
-    for fragment in fragments_collection.find():
+    for fragment in annotations.find():
         annotated_fragments_ids.add(fragment.get('fragmentNumber'))
     return annotated_fragments_ids
 
@@ -75,24 +72,6 @@ def retrieve_image_from_filename(file_name, db):
         image = decode_binary_to_image(file_data)
         return image
     return None
-
-
-def filter_df_by_overlap_threshold(joined, gdf2):
-    """Keep coordinates if intersection area/Union area (IoU) exceeds a certain threshold"""
-    iou_threshold = 0.5
-    significant_overlaps = []
-
-    for _, row in joined.iterrows():
-        box1 = row["geometry"]
-        box2 = gdf2.loc[row["index_right"], "geometry"]
-
-        intersection_area = box1.intersection(box2).area
-        union_area = box1.area + box2.area - intersection_area
-        iou = intersection_area / union_area if union_area > 0 else 0
-
-        if iou > iou_threshold:
-            significant_overlaps.append((*row, iou))
-    return significant_overlaps
 
 def sort_cropped_signs(db, fragments_to_match, metadata_list, abz_sign_dict):
     """Crop desired signs in image, then save sign extracts with source file_name and position of signs."""

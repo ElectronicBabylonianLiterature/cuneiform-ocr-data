@@ -51,9 +51,10 @@ def retrieve_image_from_filename(file_name, db):
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
-    fragments_to_match = return_fragments_to_match(db)
-
+    annotations = db['annotations']
     folder = 'data_from_ocrjson'
+    # fragments which already have annotations have already been excluded from the sign crops I did in April, but since then there would've been new annotations, so redo filter 
+    annotated_fragments_ids = get_annotated_fragments_ids(annotations)
 
     # loop through OCRed signs to annotated sign 
     ocr_signs_array = read_json_file()
@@ -66,6 +67,7 @@ if __name__ == '__main__':
         print(foldername)
         for jpg in os.listdir(os.path.join(folder_path, foldername)):
             sign_name, fragment_number, index_in_ocred_json = jpg.split('.jpg')[0].split('_')
+            if fragment_number in annotated_fragments_ids: continue
             # goal: check signs property (i.e. the transliteration) in Fragments and see if sign in OCRed_Signs.json is in the transliteration
 
             # get ocredSigns 
@@ -73,3 +75,4 @@ if __name__ == '__main__':
             sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
             breakpoint()
             
+
