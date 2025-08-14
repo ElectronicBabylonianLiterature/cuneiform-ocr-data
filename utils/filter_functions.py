@@ -43,7 +43,6 @@ def remove_completions_from_transliteration(FRAGMENT_SIGNS_STRING, fragment_text
             "message": str(e),
             "traceback": traceback.format_exc()
         }
-        breakpoint()
     return filtered_transliteration 
 
 @pytest.fixture 
@@ -93,7 +92,10 @@ ABZ401 ABZ296
 ''' 
 
 def test_remove_completions_from_transliteration(fragment_signs, target_signs, fragment_text_object):
-    """ Check with { _id: "1879,0708.124" } """
+    """ 
+    Check with { _id: "1879,0708.124" } 
+    Not yet taken into account composite signs e.g. E3, KIMIN
+    """
     trimmed_transliteration = remove_completions_from_transliteration(fragment_signs, fragment_text_object)
 
 
@@ -176,6 +178,7 @@ def get_fragment_indices_to_retain(fragment_text_lines):
   
         tablet_indices.append(content_indices)
     return tablet_indices
+
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']

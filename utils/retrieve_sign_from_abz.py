@@ -8,7 +8,7 @@ def convert_abz_array_to_sign_name_array(ocred_signs_array):
 
 
 if __name__ == '__main__':
-    abl = "ABZ411"
+    abl = "ABZ480"
     abz_sign_dict = build_abz_dict()
     sign_reading = abz_sign_dict[abl]
     print(sign_reading)
