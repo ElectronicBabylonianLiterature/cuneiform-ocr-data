@@ -13,4 +13,4 @@ Pillow
 pymongo
 tqdm
 shapely
-geopandas
+pytest
