@@ -1,6 +1,7 @@
 import json
 import pytest 
 import re
+import traceback
 
 from cuneiform_ocr_data.sign_mappings.mappings import build_sign_to_abz_dict
 from utils.connection import get_connection
@@ -21,24 +22,29 @@ def generate_value_to_abz_dict(signs_coll, sign_to_abz_dict):
             for value in values:
                value_to_abz_dict[value] = abz_num
         except Exception as e:
-            import traceback
             error_info = {
                 "message": str(e),
                 "traceback": traceback.format_exc()
             }
-            # print(error_info)
     return value_to_abz_dict
 
 
 def remove_completions_from_transliteration(FRAGMENT_SIGNS_STRING, fragment_text_lines):
+    filtered_transliteration = ''
     fragment_array = [line.strip() for line in FRAGMENT_SIGNS_STRING.splitlines() if line.strip()]
-    breakpoint()
     indices_to_retain = get_fragment_indices_to_retain(fragment_text_lines)
-
-
-    # for line in fragment_array:
-
-    return 
+    try:
+        for i, array_str in enumerate(fragment_array):
+            array = array_str.split()
+            filtered = [array[j] for j in indices_to_retain[i] if j < len(array)]
+            filtered_transliteration += ' '.join(filtered) + '\n'
+    except Exception as e:
+        error_info = {
+            "message": str(e),
+            "traceback": traceback.format_exc()
+        }
+        breakpoint()
+    return filtered_transliteration 
 
 @pytest.fixture 
 def fragment_signs():
@@ -65,29 +71,33 @@ ABZ296 ABZ401 ABZ296 ABZ314
 def target_signs():
     return TARGET_SIGNS_STRING
 
+@pytest.fixture
+def fragment_text_object():
+    return read_fragment_text_object()
+
 TARGET_SIGNS_STRING = '''
-    X ABZ401 X
-    ABZ461 ABZ457 
-    ABZ461 ABZ457 ABZ73 ABZ597 ABZ470 X X X X X X X X
-    ABZ55 ABZ376 ABZ80 ABZ85
-    ABZ115 ABZ296 ABZ401 ABZ296 ABZ314 ABZ342 ABZ13 ABZ360 ABZ114 ABZ457 ABZ78 ABZ393 ABZ231 ABZ537 ABZ69
-    ABZ296 ABZ401 ABZ296 ABZ314 ABZ342 ABZ381 ABZ206 ABZ13 ABZ323 ABZ533 ABZ68 ABZ533 ABZ480 ABZ87 ABZ111 ABZ533 ABZ231
-    ABZ314 ABZ342 ABZ480 ABZ384 ABZ75 ABZ68 ABZ381 ABZ84 ABZ381 ABZ393 ABZ61 ABZ480 ABZ366 ABZ60
-    150 ABZ449 ABZ296 ABZ536 ABZ533 ABZ322 ABZ533 ABZ230 ABZ533
-    ABZ457 ABZ73 ABZ597 ABZ470 ABZ480 ABZ449 ABZ106 ABZ401 ABZ296 ABZ314 ABZ342 ABZ208 ABZ401 ABZ597 150 ABZ296 ABZ69
-    ABZ381 ABZ354 ABZ7 ABZ366 ABZ10
-    ABZ114 ABZ80 ABZ172 ABZ1 ABZ38 ABZ331e+152i ABZ398
-    ABZ597 ABZ470 ABZ295 ABZ296 ABZ209 ABZ393 ABZ61 ABZ60 ABZ1 ABZ396 ABZ597 ABZ126 ABZ10
-    ABZ401 ABZ296 ABZ314 ABZ457 ABZ134 ABZ61 ABZ480 ABZ279
-    ABZ401 ABZ296 
-    ''' 
+X ABZ401 X
+ABZ461 ABZ457
+ABZ461 ABZ457 ABZ73 ABZ597 ABZ470 X X X X X X X X
+ABZ55 ABZ376 ABZ80 ABZ85
+ABZ115 ABZ296 ABZ401 ABZ296 ABZ314 ABZ342 ABZ13 ABZ360 ABZ114 ABZ457 ABZ78 ABZ393 ABZ231 ABZ537 ABZ69
+ABZ296 ABZ401 ABZ296 ABZ314 ABZ342 ABZ381 ABZ206 ABZ13 ABZ323 ABZ533 ABZ68 ABZ533 ABZ480 ABZ87 ABZ111 ABZ533 ABZ231
+ABZ314 ABZ342 ABZ480 ABZ384 ABZ75 ABZ68 ABZ381 ABZ84 ABZ381 ABZ393 ABZ61 ABZ480 ABZ366 ABZ60
+150 ABZ449 ABZ296 ABZ536 ABZ533 ABZ322 ABZ533 ABZ230 ABZ533
+ABZ457 ABZ73 ABZ597 ABZ470 ABZ480 ABZ449 ABZ106 ABZ401 ABZ296 ABZ314 ABZ342 ABZ208 ABZ401 ABZ597 150 ABZ296 ABZ69
+ABZ381 ABZ354 ABZ7 ABZ366 ABZ10
+ABZ114 ABZ80 ABZ172 ABZ1 ABZ38 ABZ331e+152i ABZ398
+ABZ597 ABZ470 ABZ295 ABZ296 ABZ209 ABZ393 ABZ61 ABZ60 ABZ1 ABZ396 ABZ597 ABZ126 ABZ10
+ABZ401 ABZ296 ABZ314 ABZ457 ABZ134 ABZ61 ABZ480 ABZ279
+ABZ401 ABZ296
+''' 
 
-def test_remove_completions_from_transliteration(fragment_signs, target_signs):
+def test_remove_completions_from_transliteration(fragment_signs, target_signs, fragment_text_object):
     """ Check with { _id: "1879,0708.124" } """
-    trimmed_transliteration = remove_completions_from_transliteration(fragment_signs)
+    trimmed_transliteration = remove_completions_from_transliteration(fragment_signs, fragment_text_object)
 
 
-    assert trimmed_transliteration == target_signs
+    assert trimmed_transliteration.strip() == target_signs.strip()
   
 def write_fragment_text_lines(fragment_text_lines):
     with open("utils/fragment_text_object.json", "w", encoding="utf-8") as f:
@@ -116,7 +126,30 @@ def flatten_line_content(line_content):
             for el in content_no_indent
             for part in ([el[el.find('{')+1 : el.find('}')], el[el.find('}')+1:]] if '{' in el and '}' in el else [el])
         ]
-    return flat_list
+    content_no_ellipses = deal_with_ellipses(flat_list) 
+    return content_no_ellipses
+
+def deal_with_ellipses(content):
+    content = [el for el in content if el != '[...]']
+    result = []
+    i = 0
+    while i < len(content):
+        el = content[i]
+        
+        if el == '[...':
+            if i + 1 < len(content):
+                result.append('[' + content[i + 1])  
+                i += 2  # skip the next element
+                continue
+        if el == '...]':
+            result[-1] += ']'
+            i += 1
+            continue
+        
+        # Keep other elements as is
+        result.append(el)
+        i += 1
+    return result
 
 def get_element_indices_not_in_square_brackets(content):
     result_indices = []
@@ -132,9 +165,8 @@ def get_element_indices_not_in_square_brackets(content):
         if ']' in el:
             inside_brackets = False
 
-    # all_indices = set(range(len(content)))
-    # result_indices = [i for i in all_indices if i not in indices_in_brackets]
     return result_indices
+
 def get_fragment_indices_to_retain(fragment_text_lines):
     tablet_indices = []
     for line in fragment_text_lines:
@@ -153,7 +185,6 @@ if __name__ == '__main__':
 
     # get fragment text and filter transliteration
     fragment_text_lines = read_fragment_text_object()
-    indices_to_retain = get_fragment_indices_to_retain(fragment_text_lines)
 
-    filtered_transliteration = remove_completions_from_transliteration(FRAGMENT_SIGNS_STRING, indices_to_retain) 
-        # if "]" in
+    filtered_transliteration = remove_completions_from_transliteration(FRAGMENT_SIGNS_STRING, fragment_text_lines) 
+    breakpoint()
