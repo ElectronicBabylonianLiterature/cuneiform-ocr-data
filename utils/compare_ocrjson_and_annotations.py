@@ -127,10 +127,7 @@ if __name__ == '__main__':
             transliteration_array = get_processed_transliteration(fragment_object)
         
             crops_of_fragment = crops_groupped_by_fragment[fragment_number]
-            # 1. check if readings is in the fragment itself 
-            readings_not_in_fragment = [crop not in transliteration_array for crop in ocred_signs_array]
-            indices_of_ocred_signs_not_in_fragment = [i for i, not_in_frag in enumerate(readings_not_in_fragment) if not_in_frag == True ]
-            wrong_crops = [p for p in crops_of_fragment if p.name.split('_')[2].split(".jpg")[0] in indices_of_ocred_signs_not_in_fragment] 
+
             breakpoint()
 
             sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
