@@ -119,8 +119,8 @@ def save_metadata(metadata_list):
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
-    fragments_to_match = return_fragments_to_match(db)
-
+    fragments_to_match = return_fragments_to_match(db) # 30661
+    
     # match signs in json with signs in fragments with transliteration
     ocr_signs_array = read_json_file()
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)

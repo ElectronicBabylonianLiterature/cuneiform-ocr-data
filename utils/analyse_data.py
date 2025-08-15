@@ -1,5 +1,6 @@
 # standard imports
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def generate_statistics(metadata):
         stats[sign] += 1
     summary["num_of_diff_signs"] = len(stats.keys())
     summary["sign_total"] = sum(stats.values())
+    # The following is i.e. jq -r '.[].source_image' data_from_ocrjson/crops_metadata.json | sort -u | wc -l
     summary["fragments_total"] = len({item["source_image"] for item in metadata}) 
     return stats, summary
 
@@ -32,28 +34,40 @@ def count_unique_fragments_in_ocred_json():
     return count
  
 
+def natural_key(s):
+    "Sort by ABZ1, ABZ5...and not ABZ1, ABZ101"
+    return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', s)]
+
+
 def count_unique_fragments_from_cropped_photos():
     root_folder = Path("data_from_ocrjson")
-
     middle_bits = set()
-
+    num_of_signs = defaultdict(lambda: {"count":0, "sign_name":""})
     # Search for all .jpg files recursively
     for jpg_file in root_folder.rglob("*.jpg"):
         filename = jpg_file.name
-        fragment_name = filename.split('_')[1]
+        sign_name, fragment_name = filename.split('_')[:2]
         middle_bits.add(fragment_name)
-    return len(middle_bits)
+        if not num_of_signs[f"{jpg_file.parent.name}"]["sign_name"]: 
+            num_of_signs[f"{jpg_file.parent.name}"]["sign_name"] = sign_name
+        num_of_signs[f"{jpg_file.parent.name}"]["count"] += 1
+
+    num_of_signs_sorted = {key: num_of_signs[key] for key in sorted(num_of_signs, key=natural_key)}
+
+    return len(middle_bits), num_of_signs_sorted
 
 
 signs_outputted_from_ocr = ['ABZ1', 'ABZ279', 'ABZ384', 'ABZ537', 'ABZ15', 'ABZ13', 'ABZ342', 'ABZ354', 'ABZ381', 'ABZ206', 'ABZ318', 'ABZ449', 'ABZ69', 'ABZ597', 'ABZ75', 'ABZ231', 'ABZ295', 'ABZ58', 'ABZ545', 'ABZ214', 'ABZ144', 'ABZ533', 'ABZ151', 'ABZ70', 'ABZ324', 'ABZ139', 'ABZ343', 'ABZ461', 'ABZ52', 'ABZ142', 'ABZ399', 'ABZ99', 'ABZ427', 'ABZ586', 'ABZ579', 'ABZ480', 'ABZ470', 'ABZ101', 'ABZ68', 'ABZ211', 'ABZ172', 'ABZ86', 'ABZ128', 'ABZ59', 'ABZ328', 'ABZ230', 'ABZ366', 'ABZ296', 'ABZ74', 'ABZ61', 'ABZ331e+152i', 'ABZ313', 'ABZ371', 'ABZ376', 'ABZ232', 'ABZ457', 'ABZ5', 'ABZ383', 'ABZ396', 'ABZ589', 'ABZ353', 'ABZ55', 'ABZ308', 'ABZ167', 'ABZ73', 'ABZ411', 'ABZ536', 'ABZ112', 'ABZ334', 'ABZ367', 'ABZ319', 'ABZ7', 'ABZ570', 'ABZ306', 'ABZ397', 'ABZ212', 'ABZ147', 'ABZ80', 'ABZ104', 'ABZ575', 'ABZ207', 'ABZ532', 'ABZ145', 'ABZ84', 'ABZ335', 'ABZ60', 'ABZ401', 'ABZ115', 'ABZ170', 'ABZ330', 'ABZ79', 'ABZ38', 'ABZ312', 'ABZ78', 'ABZ111', 'ABZ97', 'ABZ535', 'ABZ12', 'ABZ595', 'ABZ72', 'ABZ85', 'ABZ322', 'ABZ314', 'ABZ554', 'ABZ339', 'ABZ9', 'ABZ6', 'ABZ143', 'ABZ468', 'ABZ62', 'ABZ191', 'ABZ331', 'ABZ437', 'ABZ87', 'ABZ94', 'ABZ138', 'ABZ398', 'ABZ598a', 'ABZ440', 'ABZ465', 'ABZ152', 'ABZ134', 'ABZ393', 'ABZ298', 'ABZ50']
 
 if __name__ == '__main__':
     cropped_signs_folder_name = "data_from_ocrjson"
-    metadata = load_json_metadata(cropped_signs_folder_name)
-    stats, summary = generate_statistics(metadata)
-    print(stats)
-    print(summary)
+    # metadata = load_json_metadata(cropped_signs_folder_name)
+    # stats, summary = generate_statistics(metadata) 
     # print(len(CLASSES))
     # print(f"Count of unique fragments in OCRed Signs json: {count_unique_fragments_in_ocred_json()}") # 72423
-    print(f"Count of unique fragments in cropped images: {count_unique_fragments_from_cropped_photos()}") # 18888
+    unique_fragments, num_of_signs_dict = count_unique_fragments_from_cropped_photos()
+    print(f"Count of unique fragments in cropped images: {unique_fragments}") # 18888
+    breakpoint()
+    print(f"Count of cropped signs: {sum(num_of_signs_dict.values())}") # 18888
+    
     breakpoint()
