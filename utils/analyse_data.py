@@ -67,7 +67,6 @@ if __name__ == '__main__':
     # print(f"Count of unique fragments in OCRed Signs json: {count_unique_fragments_in_ocred_json()}") # 72423
     unique_fragments, num_of_signs_dict = count_unique_fragments_from_cropped_photos()
     print(f"Count of unique fragments in cropped images: {unique_fragments}") # 18888
-    breakpoint()
-    print(f"Count of cropped signs: {sum(num_of_signs_dict.values())}") # 18888
+    print(f"Count of cropped signs: {sum(num_of_signs_dict.values())}")  
     
     breakpoint()
