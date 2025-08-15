@@ -1,6 +1,7 @@
 # standard imports
 import json
 from collections import defaultdict
+import os
 from pathlib import Path
 
 # package imports
@@ -60,6 +61,20 @@ def open_posix_path_jpg(p):
         print(img.format)    # JPEG
         print(img.size)  
 
+def count_crops_to_delete(file_path="utils/images_to_delete/no_partial_order_x1.txt"):
+    counts = defaultdict(int)
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            folder_name = Path(line).parts[1]
+            counts[folder_name] += 1
+    crops_to_delete = {key: counts[key] for key in sorted(counts, key=natural_key)}
+    return crops_to_delete 
+
+def calculate_crops_percentage(crops_to_delete, num_of_signs_dict):
+    return { k: {"proportion": round(v/num_of_signs_dict[k]['count'], 3), "total": num_of_signs_dict[k]['count'] }for k, v in crops_to_delete.items() }
+
 if __name__ == '__main__':
     cropped_signs_folder_name = "data_from_ocrjson"
     # metadata = load_json_metadata(cropped_signs_folder_name)
@@ -67,10 +82,17 @@ if __name__ == '__main__':
     # print(len(CLASSES))
     # print(f"Count of unique fragments in OCRed Signs json: {count_unique_fragments_in_ocred_json()}") # 72423
 
-    # unique_fragments, num_of_signs_dict = count_unique_fragments_from_cropped_photos()
+    unique_fragments, num_of_signs_dict = count_unique_fragments_from_cropped_photos()
     # print(f"Count of unique fragments in cropped images: {unique_fragments}") # 18888
     # print(f"Count of cropped signs: {sum(num_of_signs_dict.values())}")  
     
-    disambiguated_kv_pairs = construct_kv_pairs_of_disambiguated_abz_reading()
-    
+    # disambiguated_kv_pairs = construct_kv_pairs_of_disambiguated_abz_reading()
+    crops_to_delete = count_crops_to_delete() 
+
+    crop_percentages = calculate_crops_percentage(crops_to_delete, num_of_signs_dict)
+    output_folder_path = 'utils/stats'
+    os.makedirs(output_folder_path, exist_ok=True)
+    with open(f"{output_folder_path}/no_partial_order_percentages.json", 'a', encoding='utf-8') as f:
+        json.dump(crop_percentages, f)
+
     breakpoint()
