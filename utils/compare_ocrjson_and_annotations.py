@@ -18,6 +18,8 @@ from utils.extract_data import get_annotated_fragments_ids, read_json_file, tran
 from utils.filter_functions import signs_outputted_from_ocr, remove_completions_from_transliteration
 ########################################################
 
+CROPPED_OCR_SIGNS_FOLDER = 'data_from_ocrjson'
+
 def filter_transliteration_by_ocr_target_signs(transliteration):
     ocr_target_signs = signs_outputted_from_ocr
     return [ abl for abl in transliteration if abl in ocr_target_signs ]
@@ -31,18 +33,8 @@ def appears_in_order(sequence, lst):
     it = iter(lst)
     return all(item in it for item in sequence)
 
-def safe_slice(lst, idx):
-    """
-    Return lst[idx-2 : idx+2] if possible.
-    If idx-2 < 0, start from 0.
-    If idx+2 > len(lst), end at len(lst).
-    """
-    start = max(idx - 2, 0)
-    end = min(idx + 2, len(lst))
-    return lst[start:end]
-
 def get_all_crops():
-    root_folder = Path("data_from_ocrjson")
+    root_folder = Path(CROPPED_OCR_SIGNS_FOLDER)
     all_crops_generator = root_folder.rglob("*.jpg")
     return all_crops_generator
 
@@ -79,7 +71,7 @@ def delete_crops_from_now_annotated_fragments(annotations):
     annotated_fragments_ids = get_annotated_fragments_ids(annotations)
     crops_to_delete = []
     crops_to_delete.extend(get_crops_from_now_annotated_fragments(annotated_fragments_ids))
-    crops_to_delete_txt = "utils/cropped_images_to_delete.txt"
+    crops_to_delete_txt = "utils/images_to_delete/delete_because_annotated.txt"
     write_cropped_images_to_delete(crops_to_delete, crops_to_delete_txt) 
     delete_cropped_images_based_on_list(crops_to_delete_txt)
 
@@ -87,7 +79,7 @@ def get_processed_transliteration(fragment_object):
     """Process transliteration by filtering transliteration by target signs"""
 
     transliteration = fragment_object[ "signs" ]
-    # transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"]) # TODO: solve problem with single ruling check K.13973. 
+    # transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"]) 
     transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration.split())
     # transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
 
@@ -110,64 +102,99 @@ def get_out_of_order_indices(partial_tuples, full):
                 out_of_order.append(idx)
     return out_of_order
 
+def check_local_order(partials, full, out_of_order_indices, window=2):
+    results = {}
+    partials_to_check = [(p,idx) for idx, p in enumerate(partials) if str(idx) in out_of_order_indices ]
+    for i, partial_tuple in enumerate(partials_to_check):
+        partial, idx = partial_tuple
+        # get local context
+        start = max(0, i - window)
+        end = min(len(partial), i + window + 1)
+        context = partial[start:end]
+
+        results[str(idx)] = is_ordered_subsequence(context, full) 
+
+    return results
+
+def get_out_of_order_crops(get_out_of_order_indices, crops_of_fragment, cropped_ocred_signs_and_index_array, transliteration_array):
+    """
+    Get crops which do not have local ordering. 
+    E.g. 
+    partial (OCR_ed signs not in global ordering)= ['BI', 'EN', 'BI', 'KA']
+    full (transliterated signs) = ['BI', 'AN', 'UD', 'EN', 'IM', 'BI', 'RI', 'A', 'KA', 'RA']
+    For 'EN', we check up to 2 signs before and after if they are in non-consecutive order. And it is. 
+    """
+    cropped_ocred_signs = [t[0] for t in cropped_ocred_signs_and_index_array]
+    out_of_order_indices = get_out_of_order_indices(cropped_ocred_signs_and_index_array, transliteration_array)
+    in_order_array = check_local_order(cropped_ocred_signs, transliteration_array, out_of_order_indices)
+    out_of_local_order_crops = [p for p in crops_of_fragment if in_order_array[p.name.split('_')[2].split(".jpg")[0]] == False]
+
+    return out_of_local_order_crops
+
+def get_crops_groupped_by_fragments():
+    """Get dict of fragment_number:[list of crops]"""
+    all_crops = get_all_crops()
+    crop_sets_groupped_by_fragment = defaultdict(set)
+    for crop in all_crops:
+        fragment = crop.name.split("_")[1]
+        crop_sets_groupped_by_fragment[fragment].add(crop)
+    crops_groupped_by_fragment = {k:list(v) for k, v in crop_sets_groupped_by_fragment.items()} 
+
+    return crops_groupped_by_fragment
+
+def get_ocred_signs(fragment_number):
+    """Get OCR-read signs from the json file eBL_OCRed_Signs.json"""
+    ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
+    cropped_ocred_signs_indices = [posix_path.name.split('_')[2].split(".jpg")[0] for posix_path in crops_of_fragment]
+    cropped_ocred_signs_and_index_array = [(sign,str(i)) for i, sign in enumerate(ocred_signs_array) if str(i) in cropped_ocred_signs_indices]
+    # sign_name_array = convert_abz_array_to_sign_name_array(cropped_ocred_signs_array)
+    return cropped_ocred_signs_and_index_array
+
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
     fragments = db['fragments']
- 
-    cropped_ocr_signs_folder = 'data_from_ocrjson'
+    output_folder_path = 'utils/images_to_delete'
+    # delete_crops_from_now_annotated_fragments(annotations) # Done 
 
-    # delete_crops_from_now_annotated_fragments(annotations)
-
-    all_crops = get_all_crops()
-    crops_groupped_by_fragment = defaultdict(set)
-
-    for crop in all_crops:
-        fragment = crop.name.split("_")[1]
-        crops_groupped_by_fragment[fragment].add(crop)
-    
-
-    # loop through OCRed signs to annotated sign 
+    crops_groupped_by_fragment = get_crops_groupped_by_fragments()
     ocr_signs_array = read_json_file()
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
-    folder_path = os.path.join(os.getcwd(),cropped_ocr_signs_folder)
     crops_to_delete = []
-    for iter_idx, fragment_number in enumerate(crops_groupped_by_fragment.keys()):
+    for iter_idx, fragment_number in tqdm(enumerate(crops_groupped_by_fragment.keys()[:10])):
         try:
             crops_of_fragment = crops_groupped_by_fragment[fragment_number]
             # get ocredSigns 
-            ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
-            cropped_ocred_signs_indices = [posix_path.name.split('_')[2].split(".jpg")[0] for posix_path in crops_of_fragment]
-            cropped_ocred_signs_and_index_array = [(sign,str(i)) for i, sign in enumerate(ocred_signs_array) if str(i) in cropped_ocred_signs_indices]
-            # sign_name_array = convert_abz_array_to_sign_name_array(cropped_ocred_signs_array)
+            cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict)
 
             # get transliteration
             fragment_object = fragments.find_one({"_id": fragment_number})
             if not fragment_object: continue
             transliteration_array = get_processed_transliteration(fragment_object)
+
             # 0. exclude ocr readings that are not in the tablet: already done in the cropping stage
             # 1. check ocr readings appear in order, if so no deletions needed.  
             cropped_ocred_signs = [t[0] for t in cropped_ocred_signs_and_index_array]
-            if is_ordered_subsequence(cropped_ocred_signs, transliteration_array): 
-                continue
-            # 2. failing that, check if each sign 
-            out_of_order_indices = get_out_of_order_indices(cropped_ocred_signs_and_index_array, transliteration_array)
-            wrong_crops = [p for p in crops_of_fragment if p.name.split('_')[2].split(".jpg")[0] in out_of_order_indices] 
+            if is_ordered_subsequence(cropped_ocred_signs, transliteration_array): continue
+
+            # 2. failing that, get out of order crops and check if they are in order locally
+            out_of_local_order_crops = get_out_of_order_crops(crops_of_fragment, cropped_ocred_signs_and_index_array, transliteration_array)  
             breakpoint()
+            crops_to_delete.extend(out_of_local_order_crops)
             
-            sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
-            if not appears_in_order(sequence, transliteration_sign_name_array):
-                crops_to_delete.append(jpg)
         except Exception as e:
             error_info = {
                 "message": str(e),
                 "traceback": traceback.format_exc()
             }
-            print(error_info)
-        folder_path = 'utils/images_to_delete'
-        os.makedirs(folder_path, exist_ok=True)
-        with open(f"{folder_path}/{foldername}", 'w', encoding='utf-8') as f:
+            with open(f"{output_folder_path}/crop_comparison_err.log", "a") as f:
+                json.dump(error_info, f)
+                f.write("\n")
+            continue
+
+        os.makedirs(output_folder_path, exist_ok=True)
+        with open(f"{output_folder_path}/delete_because_no_partial_order.txt", 'w', encoding='utf-8') as f:
             for item in crops_to_delete:
                 f.write(f'{item}\n')
         breakpoint()
