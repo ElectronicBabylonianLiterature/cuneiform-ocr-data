@@ -102,7 +102,7 @@ def get_out_of_order_indices(partial_tuples, full):
                 out_of_order.append(idx)
     return out_of_order
 
-def check_local_order(partials, full, out_of_order_indices, window=2):
+def check_local_order(partials, full, out_of_order_indices, window=1):
     results = {}
     partials_to_check = [(p,idx) for idx, p in enumerate(partials) if str(idx) in out_of_order_indices ]
     for i, partial_tuple in enumerate(partials_to_check):
@@ -116,18 +116,18 @@ def check_local_order(partials, full, out_of_order_indices, window=2):
 
     return results
 
-def get_out_of_order_crops(get_out_of_order_indices, crops_of_fragment, cropped_ocred_signs_and_index_array, transliteration_array):
+def get_out_of_order_crops(crops_of_fragment, cropped_ocred_signs_and_index_array, transliteration_array):
     """
     Get crops which do not have local ordering. 
     E.g. 
     partial (OCR_ed signs not in global ordering)= ['BI', 'EN', 'BI', 'KA']
     full (transliterated signs) = ['BI', 'AN', 'UD', 'EN', 'IM', 'BI', 'RI', 'A', 'KA', 'RA']
-    For 'EN', we check up to 2 signs before and after if they are in non-consecutive order. And it is. 
+    For 'EN', we check up to X (1 or 2 etc.) signs before and after if they are in non-consecutive order. And it is. 
     """
     cropped_ocred_signs = [t[0] for t in cropped_ocred_signs_and_index_array]
     out_of_order_indices = get_out_of_order_indices(cropped_ocred_signs_and_index_array, transliteration_array)
     in_order_array = check_local_order(cropped_ocred_signs, transliteration_array, out_of_order_indices)
-    out_of_local_order_crops = [p for p in crops_of_fragment if in_order_array[p.name.split('_')[2].split(".jpg")[0]] == False]
+    out_of_local_order_crops = [p for p in crops_of_fragment if in_order_array.get(p.name.split('_')[2].split(".jpg")[0]) == False]
 
     return out_of_local_order_crops
 
@@ -142,7 +142,7 @@ def get_crops_groupped_by_fragments():
 
     return crops_groupped_by_fragment
 
-def get_ocred_signs(fragment_number):
+def get_ocred_signs(fragment_number, ocr_signs_dict):
     """Get OCR-read signs from the json file eBL_OCRed_Signs.json"""
     ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
     cropped_ocred_signs_indices = [posix_path.name.split('_')[2].split(".jpg")[0] for posix_path in crops_of_fragment]
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
     crops_to_delete = []
-    for iter_idx, fragment_number in tqdm(enumerate(crops_groupped_by_fragment.keys()[:10])):
+    for iter_idx, fragment_number in tqdm(enumerate(list(crops_groupped_by_fragment.keys()))):
         try:
             crops_of_fragment = crops_groupped_by_fragment[fragment_number]
             # get ocredSigns 
@@ -180,7 +180,6 @@ if __name__ == '__main__':
 
             # 2. failing that, get out of order crops and check if they are in order locally
             out_of_local_order_crops = get_out_of_order_crops(crops_of_fragment, cropped_ocred_signs_and_index_array, transliteration_array)  
-            breakpoint()
             crops_to_delete.extend(out_of_local_order_crops)
             
         except Exception as e:
@@ -193,10 +192,9 @@ if __name__ == '__main__':
                 f.write("\n")
             continue
 
-        os.makedirs(output_folder_path, exist_ok=True)
-        with open(f"{output_folder_path}/delete_because_no_partial_order.txt", 'w', encoding='utf-8') as f:
-            for item in crops_to_delete:
-                f.write(f'{item}\n')
-        breakpoint()
+    os.makedirs(output_folder_path, exist_ok=True)
+    with open(f"{output_folder_path}/no_partial_order.txt", 'a', encoding='utf-8') as f:
+        for item in crops_to_delete:
+            f.write(f'{item}\n')
        
 
