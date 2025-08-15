@@ -33,3 +33,4 @@ cmds.txt
 tags
 activate_venv.sh
 *.log
+cropped_images_to_delete.txt

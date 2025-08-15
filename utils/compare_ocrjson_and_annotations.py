@@ -42,12 +42,16 @@ def safe_slice(lst, idx):
     end = min(idx + 2, len(lst))
     return lst[start:end]
 
+def get_all_crops():
+    root_folder = Path("data_from_ocrjson")
+    all_crops_generator = root_folder.rglob("*.jpg")
+    return all_crops_generator
+
 def get_crops_from_now_annotated_fragments(annotated_fragments_id):
     """Return crop images to delete if they belong to fragments that are now annotated."""
-    root_folder = Path("data_from_ocrjson")
     images_to_delete = set()
 
-    for jpg_file in root_folder.rglob("*.jpg"):
+    for jpg_file in get_all_crops():
         filename = jpg_file.name
         fragment_name = filename.split('_')[1]
         if fragment_name in annotated_fragments_id:
@@ -80,6 +84,16 @@ def delete_crops_from_now_annotated_fragments(annotations):
     write_cropped_images_to_delete(crops_to_delete, crops_to_delete_txt) 
     delete_cropped_images_based_on_list(crops_to_delete_txt)
 
+def get_processed_transliteration(fragment_object):
+    """Process transliteration by filtering transliteration by target signs"""
+
+    transliteration = fragment_object[ "signs" ]
+    transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"])
+    transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration_without_completions.split())
+    transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
+
+    return transliteration_sign_name_array
+
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
@@ -89,41 +103,42 @@ if __name__ == '__main__':
 
     # delete_crops_from_now_annotated_fragments(annotations)
 
+    all_crops = get_all_crops()
+    crops_groupped_by_fragment = defaultdict(set)
+
+    for crop in all_crops:
+        fragment = crop.name.split("_")[1]
+        crops_groupped_by_fragment[fragment].add(crop)
+    
+
     # loop through OCRed signs to annotated sign 
     ocr_signs_array = read_json_file()
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
     folder_path = os.path.join(os.getcwd(),cropped_ocr_signs_folder)
     crops_to_delete = []
-    for foldername in sorted(os.listdir(folder_path)):
-        non_folder_elements = ('json', '.DS_Store')
-        if any(x in foldername for x in non_folder_elements): continue
-        print(foldername)
-        for jpg in tqdm(sorted(os.listdir(os.path.join(folder_path, foldername)))):
-            sign_name, fragment_number, index_in_ocred_json = jpg.split('.jpg')[0].split('_')
-            # goal: check signs property (i.e. the transliteration) in Fragments and see if sign in OCRed_Signs.json is in the transliteration
+    for fragment_number in crops_groupped_by_fragment.keys():
+        # get ocredSigns 
+        ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
+        sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
+        try:
+            # get transliteration
+            fragment_object = fragments.find_one({"_id": fragment_number})
+            if not fragment_object: continue
+            transliteration_sign_name_array = get_processed_transliteration(fragment_object)
+        
+            crops_of_fragment = crops_groupped_by_fragment[fragment_number]
+            breakpoint()
 
-            # get ocredSigns 
-            ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
-            sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
-            try:
-                # get transliteration
-                fragment_object = fragments.find_one({"_id": fragment_number})
-                if fragment_object:
-                    transliteration = fragment_object[ "signs" ]
-                    transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"])
-                    transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration_without_completions.split())
-                    transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
-                
-                    sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
-                    if not appears_in_order(sequence, transliteration_sign_name_array):
-                        crops_to_delete.append(jpg)
-            except Exception as e:
-                error_info = {
-                    "message": str(e),
-                    "traceback": traceback.format_exc()
-                }
-                print(error_info)
+            sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
+            if not appears_in_order(sequence, transliteration_sign_name_array):
+                crops_to_delete.append(jpg)
+        except Exception as e:
+            error_info = {
+                "message": str(e),
+                "traceback": traceback.format_exc()
+            }
+            print(error_info)
         folder_path = 'utils/images_to_delete'
         os.makedirs(folder_path, exist_ok=True)
         with open(f"{folder_path}/{foldername}", 'w', encoding='utf-8') as f:
