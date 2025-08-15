@@ -93,6 +93,23 @@ def get_processed_transliteration(fragment_object):
 
     return transliteration_array_of_ocred_signs_only
 
+def is_ordered_subsequence(sub, full):
+    iter_full = iter(full)
+    return all(elem in iter_full for elem in sub)
+
+def get_out_of_order_indices(partial_tuples, full):
+    iter_full = iter(full)
+    out_of_order = []
+    for elem, idx  in partial_tuples:
+        if elem in full:
+            # if element not found in the remaining iterator, it's out of order
+            try:
+                while next(iter_full) != elem:
+                    pass
+            except StopIteration:
+                out_of_order.append(idx)
+    return out_of_order
+
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
@@ -116,20 +133,29 @@ if __name__ == '__main__':
 
     folder_path = os.path.join(os.getcwd(),cropped_ocr_signs_folder)
     crops_to_delete = []
-    for fragment_number in crops_groupped_by_fragment.keys():
-        # get ocredSigns 
-        ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
-        # sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
+    for iter_idx, fragment_number in enumerate(crops_groupped_by_fragment.keys()):
         try:
+            crops_of_fragment = crops_groupped_by_fragment[fragment_number]
+            # get ocredSigns 
+            ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
+            cropped_ocred_signs_indices = [posix_path.name.split('_')[2].split(".jpg")[0] for posix_path in crops_of_fragment]
+            cropped_ocred_signs_and_index_array = [(sign,str(i)) for i, sign in enumerate(ocred_signs_array) if str(i) in cropped_ocred_signs_indices]
+            # sign_name_array = convert_abz_array_to_sign_name_array(cropped_ocred_signs_array)
+
             # get transliteration
             fragment_object = fragments.find_one({"_id": fragment_number})
             if not fragment_object: continue
             transliteration_array = get_processed_transliteration(fragment_object)
-        
-            crops_of_fragment = crops_groupped_by_fragment[fragment_number]
-
+            # 0. exclude ocr readings that are not in the tablet: already done in the cropping stage
+            # 1. check ocr readings appear in order, if so no deletions needed.  
+            cropped_ocred_signs = [t[0] for t in cropped_ocred_signs_and_index_array]
+            if is_ordered_subsequence(cropped_ocred_signs, transliteration_array): 
+                continue
+            # 2. failing that, check if each sign 
+            out_of_order_indices = get_out_of_order_indices(cropped_ocred_signs_and_index_array, transliteration_array)
+            wrong_crops = [p for p in crops_of_fragment if p.name.split('_')[2].split(".jpg")[0] in out_of_order_indices] 
             breakpoint()
-
+            
             sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
             if not appears_in_order(sequence, transliteration_sign_name_array):
                 crops_to_delete.append(jpg)
