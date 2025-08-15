@@ -3,6 +3,9 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+# package imports
+from PIL import Image
+
 # local imports
 from utils.extract_data import read_json_file
 from utils.filter_functions import construct_kv_pairs_of_disambiguated_abz_reading, natural_key
@@ -51,6 +54,11 @@ def count_unique_fragments_from_cropped_photos():
 
     return len(middle_bits), num_of_signs_sorted
 
+def open_posix_path_jpg(p):
+    with Image.open(p) as img:
+        img.show()           # Opens with default viewer
+        print(img.format)    # JPEG
+        print(img.size)  
 
 if __name__ == '__main__':
     cropped_signs_folder_name = "data_from_ocrjson"
