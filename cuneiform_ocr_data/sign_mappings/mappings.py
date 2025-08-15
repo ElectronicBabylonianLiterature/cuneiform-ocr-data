@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
@@ -39,6 +40,20 @@ def build_abz_dict():
     for elem in mapping:
         sign, abz, _ = elem
         mapping_dict[abz] = sign
+    return mapping_dict
+
+def build_abz_to_signs_dict():
+    """Same as build_abz_dict but get all abz readings for the same abz number."""
+    mapping = pd.read_csv(
+        Path(Path(__file__).resolve().parent / "ebl.txt"),
+        header=None,
+        delimiter=" ",
+        keep_default_na=False,
+    ).values.tolist()
+    mapping_dict = defaultdict(list)
+    for elem in mapping:
+        sign, abz, _ = elem
+        mapping_dict[abz].append(sign)
     return mapping_dict
 
 def build_sign_to_abz_dict():

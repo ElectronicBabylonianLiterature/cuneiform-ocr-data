@@ -12,16 +12,15 @@ from PIL import Image
 from tqdm import tqdm
 
 # local imports
-from connection import get_connection
-from retrieve_sign_from_abz import convert_abz_array_to_sign_name_array
-from extract_data import get_annotated_fragments_ids, JSON_FILE_NAME, read_json_file, transform_signs_array_to_signs_dict
-from analyse_data import signs_outputted_from_ocr
-from utils.filter_functions import remove_completions_from_transliteration
+from utils.connection import get_connection
+from utils.retrieve_sign_from_abz import convert_abz_array_to_sign_name_array
+from utils.extract_data import get_annotated_fragments_ids, read_json_file, transform_signs_array_to_signs_dict
+from utils.filter_functions import signs_outputted_from_ocr, remove_completions_from_transliteration
 ########################################################
 
 def filter_transliteration_by_ocr_target_signs(transliteration):
     ocr_target_signs = signs_outputted_from_ocr
-    return [abl for abl in transliteration if abl in ocr_target_signs ]
+    return [ abl for abl in transliteration if abl in ocr_target_signs ]
 
 
 def appears_in_order(sequence, lst):
@@ -88,11 +87,11 @@ def get_processed_transliteration(fragment_object):
     """Process transliteration by filtering transliteration by target signs"""
 
     transliteration = fragment_object[ "signs" ]
-    transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"])
-    transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration_without_completions.split())
-    transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
+    # transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"]) # TODO: solve problem with single ruling check K.13973. 
+    transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration.split())
+    # transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
 
-    return transliteration_sign_name_array
+    return transliteration_array_of_ocred_signs_only
 
 if __name__ == '__main__':
     client = get_connection()
@@ -120,14 +119,18 @@ if __name__ == '__main__':
     for fragment_number in crops_groupped_by_fragment.keys():
         # get ocredSigns 
         ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
-        sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
+        # sign_name_array = convert_abz_array_to_sign_name_array(ocred_signs_array)
         try:
             # get transliteration
             fragment_object = fragments.find_one({"_id": fragment_number})
             if not fragment_object: continue
-            transliteration_sign_name_array = get_processed_transliteration(fragment_object)
+            transliteration_array = get_processed_transliteration(fragment_object)
         
             crops_of_fragment = crops_groupped_by_fragment[fragment_number]
+            # 1. check if readings is in the fragment itself 
+            readings_not_in_fragment = [crop not in transliteration_array for crop in ocred_signs_array]
+            indices_of_ocred_signs_not_in_fragment = [i for i, not_in_frag in enumerate(readings_not_in_fragment) if not_in_frag == True ]
+            wrong_crops = [p for p in crops_of_fragment if p.name.split('_')[2].split(".jpg")[0] in indices_of_ocred_signs_not_in_fragment] 
             breakpoint()
 
             sequence = safe_slice(sign_name_array, int(index_in_ocred_json))
