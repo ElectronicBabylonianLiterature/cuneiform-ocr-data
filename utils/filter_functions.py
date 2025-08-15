@@ -190,4 +190,3 @@ if __name__ == '__main__':
     fragment_text_lines = read_fragment_text_object()
 
     filtered_transliteration = remove_completions_from_transliteration(FRAGMENT_SIGNS_STRING, fragment_text_lines) 
-    breakpoint()

@@ -14,7 +14,7 @@ from tqdm import tqdm
 from connection import get_connection
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
 ########################################################
-Image.MAX_IMAGE_PIXELS = 400000000
+Image.MAX_IMAGE_PIXELS = 500000000
 JSON_FILE_NAME = "eBL_OCRed_Signs.json"
 
 def get_annotated_fragments_ids(annotations):
