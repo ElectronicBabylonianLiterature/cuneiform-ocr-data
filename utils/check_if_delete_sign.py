@@ -52,12 +52,12 @@ def get_start_line_index(search_text):
 		start_line = None
 		for i, line in enumerate(f, start=1):
 			if search_text in line:
-				start_line = i
+				start_line = i + 1
 
 				return start_line
 
 if __name__ == '__main__':
-	text_file = 'utils/images_to_delete/no_partial_order_x2.txt' 
+	text_file = 'utils/images_to_delete/no_partial_order_x1.txt' 
 	output_file = 'utils/images_to_delete/to_delete_after_checking.txt'
 	# last_jpg_checked = 
 	last_jpg_checked = get_last_line_of_txt(output_file)
