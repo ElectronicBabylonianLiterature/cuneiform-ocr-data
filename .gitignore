@@ -34,3 +34,4 @@ tags
 activate_venv.sh
 *.log
 images_to_delete
+*.zip

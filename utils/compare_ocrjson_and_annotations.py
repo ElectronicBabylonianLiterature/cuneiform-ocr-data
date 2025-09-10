@@ -13,9 +13,7 @@ from tqdm import tqdm
 
 # local imports
 from utils.connection import get_connection
-from utils.retrieve_sign_from_abz import convert_abz_array_to_sign_name_array
 from utils.extract_data import get_annotated_fragments_ids, read_json_file, transform_signs_array_to_signs_dict
-from utils.filter_functions import signs_outputted_from_ocr, remove_completions_from_transliteration
 ########################################################
 
 CROPPED_OCR_SIGNS_FOLDER = 'data_from_ocrjson'
