@@ -5,7 +5,6 @@ import base64
 from io import BytesIO
 
 # package imports
-from pymongo import ReturnDocument
 from PIL import Image
 import gridfs
 from tqdm import tqdm
@@ -119,7 +118,7 @@ def save_metadata(metadata_list):
 if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
-    fragments_to_match = return_fragments_to_match(db) # 30661
+    fragments_to_match = return_fragments_to_match(db) 
     
     # match signs in json with signs in fragments with transliteration
     ocr_signs_array = read_json_file()

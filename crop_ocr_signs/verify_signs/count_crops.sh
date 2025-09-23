@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Usage: ./count_crops.sh parent_dir N
+# Usage: ./count_crops.sh signs_40k_ocr_no_partial_order N 
+# where N is out of the total of 118 
+# To add for outputting to file instead of terminal: > counts.txt
+
 # Counts files in the first N subfolders of parent_dir (natural order, non-recursive)
 
 parent="$1"
