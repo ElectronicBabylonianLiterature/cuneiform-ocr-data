@@ -11,7 +11,7 @@ import gridfs
 from tqdm import tqdm
 
 # local imports
-from connection import get_connection
+from crop_ocr_signs.connection import get_connection
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
 ########################################################
 Image.MAX_IMAGE_PIXELS = 500000000

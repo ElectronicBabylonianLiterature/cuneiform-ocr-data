@@ -7,8 +7,9 @@ from tqdm import tqdm
 
 # local imports
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_dict
-from utils.filter_functions import TARGET_SIGNS_STRING, construct_kv_pairs_of_disambiguated_abz_reading
+from crop_ocr_signs.filter_functions import construct_kv_pairs_of_disambiguated_abz_reading
 
+########################################################
 def make_disambiguated_dict():
     abz_sign_dict = build_abz_dict()
     disambiguated_kv_pairs = construct_kv_pairs_of_disambiguated_abz_reading()
@@ -54,7 +55,7 @@ def update_sign_img_names_in_file(txt_file):
             abz_folder = file.parent.name
             new_path = update_sign_name(file, abz_folder, abz_sign_dict) 
             new_paths.append(new_path)
-    with open("utils/images_to_delete/no_partial_order_x1.txt", "w", encoding="utf-8") as f:
+    with open("crop_ocr_signs/verify_signs/no_partial_order_x1.txt", "w", encoding="utf-8") as f:
         for p in new_paths:
             f.write(str(p) + "\n")
 
@@ -64,8 +65,8 @@ if __name__ == '__main__':
     # sign_reading = abz_sign_dict[abl]
     # print(sign_reading)
 
-    txt_file = "utils/images_to_delete/no_partial_order_x1_old_naming.txt"
-    update_sign_img_names_in_file(txt_file)
+    txt_file = "crop_ocr_signs/verify_signs/no_partial_order_x1.txt"
+    # update_sign_img_names_in_file(txt_file)
 
 
 

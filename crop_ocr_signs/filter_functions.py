@@ -4,7 +4,7 @@ import re
 import traceback
 
 from cuneiform_ocr_data.sign_mappings.mappings import build_abz_to_signs_dict, build_sign_to_abz_dict
-from utils.connection import get_connection
+from crop_ocr_signs.connection import get_connection
 
 ########################################################
 def generate_value_to_abz_dict(signs_coll, sign_to_abz_dict):
@@ -102,11 +102,11 @@ def test_remove_completions_from_transliteration(fragment_signs, target_signs, f
     assert trimmed_transliteration.strip() == target_signs.strip()
   
 def write_fragment_text_lines(fragment_text_lines):
-    with open("utils/fragment_text_object.json", "w", encoding="utf-8") as f:
+    with open("crop_ocr_signs/fragment_text_object.json", "w", encoding="utf-8") as f:
         json.dump(fragment_text_lines,f, indent=4)
 
 def read_fragment_text_object():
-    with open("utils/fragment_text_object.json", "r", encoding="utf-8") as f:
+    with open("crop_ocr_signs/fragment_text_object.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         return data
 
@@ -184,7 +184,7 @@ def write_abz_with_more_than_one_value_dict():
     ocred_abz_to_sign_dict = {k:v for k,v in abz_to_signs_dict.items() if k in signs_outputted_from_ocr}
     unsorted_abz_with_more_than_one_value = {k:v for k,v in ocred_abz_to_sign_dict.items() if len(v) > 1}
     abz_with_more_than_one_value = {key: unsorted_abz_with_more_than_one_value[key] for key in sorted(unsorted_abz_with_more_than_one_value, key=natural_key)}
-    with open("utils/abz_with_more_than_one_value.json", "w", encoding="utf-8") as f:
+    with open("crop_ocr_signs/abz_with_more_than_one_value.json", "w", encoding="utf-8") as f:
         json.dump(abz_with_more_than_one_value, f, indent=4)
 
 
@@ -200,7 +200,6 @@ def construct_kv_pairs_of_disambiguated_abz_reading():
     Disambiguate between 
     e.g.   "ABZ15": ["KA", "|KA\u00d7GIR\u2082|"], -> KA is the one being read. 
     Discard the latter one.
-
     Function takes first reading for each ABZ by default. E.g. 
       "ABZ60": ["PAP", "|PAP.PAP\u00d7\u0160E|"],
     -> 
@@ -217,7 +216,7 @@ def construct_kv_pairs_of_disambiguated_abz_reading():
         "ABZ545": "\u0160U\u2082", # ŠU₂
         "ABZ586": "ZA"
     }
-    with open("utils/abz_with_more_than_one_value.json", "r", encoding="utf-8") as f:
+    with open("crop_ocr_signs/abz_with_more_than_one_value.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         dict_with_unique_reading = {k:v[0] for k, v in data.items()}
         dict_with_unique_reading.update(dict_with_values_to_update) 

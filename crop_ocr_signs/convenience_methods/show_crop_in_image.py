@@ -1,15 +1,13 @@
 # standard imports
-
-from utils.connection import get_connection
-JSON_FILE_NAME = "eBL_OCRed_Signs.json"
+from crop_ocr_signs.connection import get_connection
 
 # local imports
-from extract_data import crop_image, read_json_file, retrieve_image_from_filename, transform_signs_array_to_signs_dict
+from crop_ocr_signs.extract_data import crop_image, read_json_file, retrieve_image_from_filename, transform_signs_array_to_signs_dict
 """
 Get crop from coordinates in OCRed json file. 
 """
 ########################################################
-
+JSON_FILE_NAME = "eBL_OCRed_Signs.json"
 
 def get_coordinates_for_cropped_sign(fragment_number, index, ocr_signs_dict):
     coordinates = ocr_signs_dict[fragment_number]["ocredSignsCoordinates"][index]
@@ -33,4 +31,3 @@ if __name__ == '__main__':
         crop = crop_image(image, coordinates)
         crop.show()
 
-        breakpoint()

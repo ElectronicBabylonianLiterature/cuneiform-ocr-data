@@ -11,7 +11,7 @@ temp
 *.jpg
 venv/
 __pycache__
-utils/__pycache__
+crop_ocr_signs/__pycache__
 .pyre
 .venv/
 INFO

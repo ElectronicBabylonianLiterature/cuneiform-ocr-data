@@ -23,7 +23,7 @@ def move_sign_files(txt_file):
             shutil.copy(str(file_path), str(dest))
 
 if __name__ == '__main__':
-    txt_file = "utils/images_to_delete/no_partial_order_x1.txt"
+    txt_file = "crop_ocr_signs/verify_signs/no_partial_order_x1.txt"
     move_sign_files(txt_file)
 
 

@@ -12,8 +12,13 @@ from PIL import Image
 from tqdm import tqdm
 
 # local imports
-from utils.connection import get_connection
-from utils.extract_data import get_annotated_fragments_ids, read_json_file, transform_signs_array_to_signs_dict
+from crop_ocr_signs.connection import get_connection
+from crop_ocr_signs.extract_data import get_annotated_fragments_ids, read_json_file, transform_signs_array_to_signs_dict
+from crop_ocr_signs.filter_functions import signs_outputted_from_ocr
+
+"""
+Filter signs with partial order 
+"""
 ########################################################
 
 CROPPED_OCR_SIGNS_FOLDER = 'data_from_ocrjson'
@@ -69,7 +74,7 @@ def delete_crops_from_now_annotated_fragments(annotations):
     annotated_fragments_ids = get_annotated_fragments_ids(annotations)
     crops_to_delete = []
     crops_to_delete.extend(get_crops_from_now_annotated_fragments(annotated_fragments_ids))
-    crops_to_delete_txt = "utils/images_to_delete/delete_because_annotated.txt"
+    crops_to_delete_txt = "crop_ocr_signs/verify_signs/delete_because_annotated.txt"
     write_cropped_images_to_delete(crops_to_delete, crops_to_delete_txt) 
     delete_cropped_images_based_on_list(crops_to_delete_txt)
 
@@ -152,7 +157,7 @@ if __name__ == '__main__':
     client = get_connection()
     db = client['ebl']
     fragments = db['fragments']
-    output_folder_path = 'utils/images_to_delete'
+    output_folder_path = 'crop_ocr_signs/verify_signs'
     # delete_crops_from_now_annotated_fragments(annotations) # Done 
 
     crops_groupped_by_fragment = get_crops_groupped_by_fragments()
