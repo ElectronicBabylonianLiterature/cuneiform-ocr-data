@@ -77,7 +77,7 @@ def construct_kv_pairs_of_disambiguated_abz_reading():
         "ABZ545": "\u0160U\u2082", # ŠU₂
         "ABZ586": "ZA"
     }
-    with open("abz_with_more_than_one_value.json", "r", encoding="utf-8") as f:
+    with open("crop_ocr_signs/convenience_methods/abz_with_more_than_one_value.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         dict_with_unique_reading = {k:v[0] for k, v in data.items()}
         dict_with_unique_reading.update(dict_with_values_to_update) 

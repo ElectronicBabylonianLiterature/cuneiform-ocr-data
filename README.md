@@ -125,7 +125,7 @@ lastchecked = {2024-06-01}
 
 ## Crop OCR Signs
 
-The results from the OCR are in `eBL_OCRed_Signs.json` at the top level folder.
+The results from the OCR are in `eBL_OCRed_Signs.json`. To run the code, you will need to download that file from the 2024 Paper in Zenodo and put at the top level folder of the repo.
 
 To crop the signs into a organised folders, run `crop_ocr_signs/extract_data.py`.
 

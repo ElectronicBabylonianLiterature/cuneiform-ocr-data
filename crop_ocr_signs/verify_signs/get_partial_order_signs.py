@@ -36,8 +36,8 @@ def appears_in_order(sequence, lst):
     it = iter(lst)
     return all(item in it for item in sequence)
 
-def get_all_crops():
-    root_folder = Path(CROPPED_OCR_SIGNS_FOLDER)
+def get_all_crops(folder_path=CROPPED_OCR_SIGNS_FOLDER):
+    root_folder = Path(folder_path)
     all_crops_generator = root_folder.rglob("*.jpg")
     return all_crops_generator
 
@@ -80,7 +80,6 @@ def delete_crops_from_now_annotated_fragments(annotations):
 
 def get_processed_transliteration(fragment_object):
     """Process transliteration by filtering transliteration by target signs"""
-
     transliteration = fragment_object[ "signs" ]
     transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration.split())
 
@@ -132,23 +131,22 @@ def get_out_of_order_crops(crops_of_fragment, cropped_ocred_signs_and_index_arra
 
     return out_of_local_order_crops
 
-def get_crops_groupped_by_fragments():
+def get_crops_groupped_by_fragments(folder_path=CROPPED_OCR_SIGNS_FOLDER):
     """Get dict of fragment_number:[list of crops]"""
-    all_crops = get_all_crops()
+    all_crops = get_all_crops(folder_path)
     crop_sets_groupped_by_fragment = defaultdict(set)
-    for crop in all_crops:
+    for crop in tqdm(all_crops):
         fragment = crop.name.split("_")[1]
         crop_sets_groupped_by_fragment[fragment].add(crop)
     crops_groupped_by_fragment = {k:list(v) for k, v in crop_sets_groupped_by_fragment.items()} 
 
     return crops_groupped_by_fragment
 
-def get_ocred_signs(fragment_number, ocr_signs_dict):
+def get_ocred_signs(fragment_number, ocr_signs_dict, crops_of_fragment):
     """Get OCR-read signs from the json file eBL_OCRed_Signs.json"""
     ocred_signs_array = ocr_signs_dict[f"{fragment_number}.jpg"]["ocredSigns"].split()
     cropped_ocred_signs_indices = [posix_path.name.split('_')[2].split(".jpg")[0] for posix_path in crops_of_fragment]
     cropped_ocred_signs_and_index_array = [(sign,str(i)) for i, sign in enumerate(ocred_signs_array) if str(i) in cropped_ocred_signs_indices]
-    # sign_name_array = convert_abz_array_to_sign_name_array(cropped_ocred_signs_array)
     return cropped_ocred_signs_and_index_array
 
 if __name__ == '__main__':
@@ -167,7 +165,7 @@ if __name__ == '__main__':
         try:
             crops_of_fragment = crops_groupped_by_fragment[fragment_number]
             # get ocredSigns 
-            cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict)
+            cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict, crops_of_fragment)
 
             # get transliteration
             fragment_object = fragments.find_one({"_id": fragment_number})
