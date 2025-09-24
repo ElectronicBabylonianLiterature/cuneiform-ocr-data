@@ -82,9 +82,7 @@ def get_processed_transliteration(fragment_object):
     """Process transliteration by filtering transliteration by target signs"""
 
     transliteration = fragment_object[ "signs" ]
-    # transliteration_without_completions = remove_completions_from_transliteration(transliteration, fragment_object["text"]["lines"]) 
     transliteration_array_of_ocred_signs_only = filter_transliteration_by_ocr_target_signs(transliteration.split())
-    # transliteration_sign_name_array = convert_abz_array_to_sign_name_array(transliteration_array_of_ocred_signs_only)
 
     return transliteration_array_of_ocred_signs_only
 
