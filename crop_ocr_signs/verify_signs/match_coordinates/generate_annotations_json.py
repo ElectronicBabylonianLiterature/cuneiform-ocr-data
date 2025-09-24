@@ -1,5 +1,6 @@
 # standard imports 
 from collections import defaultdict
+import json
 from typing import List, Dict, Union
 
 # package imports
@@ -69,13 +70,13 @@ def get_annotations_for_signs(db, cropped_ocred_signs_and_index_array, ocr_signs
     photo_file_name = f"{fragment_number}.jpg"
     ocr_coordinates_list = ocr_signs_dict[photo_file_name]["ocredSignsCoordinates"]
     abz_sign_dict = make_disambiguated_dict()
+    image = get_image_from_file_name(photo_file_name, db)
     
     annotations = [] 
     for sign, idx in cropped_ocred_signs_and_index_array:
         annotation = defaultdict()
 
         abs_coordinates = ocr_coordinates_list[int(idx)]
-        image = get_image_from_file_name(photo_file_name, db)
         relative_geom = convert_abs_coordinates_to_relative_geometry(abs_coordinates, *image.size)
 
         annotation["geometry"] = relative_geom 
@@ -87,7 +88,7 @@ def get_annotations_for_signs(db, cropped_ocred_signs_and_index_array, ocr_signs
         } 
         annotation_object = Annotation(**annotation)
         annotations.append(annotation_object)
-        breakpoint()
+    return annotations
 
 
 if __name__ == '__main__':
@@ -98,10 +99,17 @@ if __name__ == '__main__':
     ocr_signs_array = read_json_file()
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
-    for fragment_number in tqdm(list(crops_groupped_by_fragment.keys())):
+    all_annotation_objs = []
+    for fragment_number in tqdm(list(crops_groupped_by_fragment.keys())[:3]):
         crops_of_fragment = crops_groupped_by_fragment[fragment_number]
         # get ocredSigns and match with coordinates
         cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict, crops_of_fragment)
-        get_annotations_for_signs(db, cropped_ocred_signs_and_index_array,ocr_signs_dict, fragment_number)
+        annotations = get_annotations_for_signs(db, cropped_ocred_signs_and_index_array,ocr_signs_dict, fragment_number)
+        annotation_obj = AnnotationObject(**{
+            "fragmentNumber": fragment_number,
+            "annotations": annotations
+        })
+        all_annotation_objs.append(annotation_obj.dict())
 
-        
+    with open("annotations_from_crops.json", "w", encoding="utf-8") as f:
+        json.dump(all_annotation_objs, f, ensure_ascii=False, indent=2)
