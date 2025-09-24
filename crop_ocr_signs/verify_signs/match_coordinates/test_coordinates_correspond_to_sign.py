@@ -1,5 +1,7 @@
 from typing import Tuple
 
+import pytest
+
 from crop_ocr_signs.connection import get_connection
 from crop_ocr_signs.convenience_methods.show_crop_in_image import get_image_from_file_name
 from crop_ocr_signs.extract_data import crop_image
@@ -9,7 +11,7 @@ def xywh_to_xyxy(coords: Tuple[float, float, float, float]) -> Tuple[float, floa
     x, y, w, h = coords
     return x, y, x + w, y + h
 
-def check_ocr_coordinates_match_sign():
+def test_check_ocr_coordinates_match_sign():
     """
     fragment_number
     """
@@ -31,6 +33,7 @@ def check_ocr_coordinates_match_sign():
     if image:
         crop = crop_image(image, coordinates_xyxy)
         crop.show()
+        pytest.fail("Forcing failure here")
 
-if __name__ == '__main__':
-    check_ocr_coordinates_match_sign() 
+# if __name__ == '__main__':
+    # check_ocr_coordinates_match_sign() 
