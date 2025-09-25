@@ -5,14 +5,10 @@ set -e
 # Configuration
 MONGODB_URI="${MONGODB_URI:-Your MongoDB connection string}"
 DATA_PATH="${DATA_PATH:-./data}"
-RAW_DATA_PATH="$DATA_PATH/raw-data"
-
 
 # Set up data directories
 DATA_PATH=$(realpath "$DATA_PATH") # convert to absolute paths
-RAW_DATA_PATH=$(realpath "$RAW_DATA_PATH")
 mkdir -p "$DATA_PATH"
-mkdir -p "$RAW_DATA_PATH"
 CURR_DIR=$(pwd)
 
 
