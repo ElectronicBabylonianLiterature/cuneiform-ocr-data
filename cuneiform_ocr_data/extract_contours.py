@@ -1,4 +1,5 @@
 # pyre-ignore-all-errors[16]
+import os
 import shutil
 from pathlib import Path
 from typing import List
@@ -70,10 +71,9 @@ if __name__ == "__main__":
     """
 
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("data/raw-data/ebl/detection")
-    output_data_path = Path(
-        "data/processed-data/ebl/ebl-detection-extracted-30-11"
-    )
+    input_data = Path(os.environ.get("EBL_ANNOTATIONS_PATH", "data/raw-data/ebl/detection"))
+    output_data_path = Path(os.environ.get("EBL_DETECTION_EXTRACTED_PATH", "data/processed-data/ebl/ebl-detection-extracted-30-11"))
+
 
     input_annotations_folder = input_data / "annotations"
     input_imgs_folder = input_data / "imgs"
@@ -92,10 +92,10 @@ if __name__ == "__main__":
         annotation_file = next(
             input_annotations_folder.glob(f"*{image_path.stem}.txt"), None
         )
+        print("image path", image_path, "annotation_file", annotation_file)
         if annotation_file is None:
             raise Exception("Not found annotations for image:", image_path.name)
         bounding_boxes_container = BoundingBoxesContainer.from_file(annotation_file)
-
         if EXTRACT_CONTOURS_AUTOMATICALLY:
             image = cv2.imread(str(image_path))
             try:

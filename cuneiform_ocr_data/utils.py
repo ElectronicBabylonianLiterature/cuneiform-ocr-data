@@ -53,8 +53,24 @@ def is_valid_file_size(path: Path, raise_error: bool) -> bool:
         return True
 
 
+def remove_empty_images_and_annotations(invalid_file, images_folder, annotations_folder, data_path):
+    # check if invalid_file is image or annotation
+    if invalid_file.parent.name == annotations_folder.name:
+        # annotation
+        annotation = invalid_file
+        annotation_id = annotation.stem.split("gt_")[1]
+        image = next(images_folder.glob(f"*{annotation_id}*"), None)
+    else:
+        # image
+        image = invalid_file
+        annotation = next(annotations_folder.glob(f"*{image.stem}*"), None)
+    print(f"Deleting {image} and {annotation}")
+    image.unlink(missing_ok=True)
+    annotation.unlink(missing_ok=True)
+
 def is_valid_data(
-    data_path: Path, images_folder="imgs", annotations_folder="annotations"
+    data_path: Path, images_folder="imgs", annotations_folder="annotations", 
+    delete_empty_imgs: bool = False
 ) -> bool:
     images_folder = data_path / images_folder
     annotations_folder = data_path / annotations_folder
@@ -64,8 +80,16 @@ def is_valid_data(
     ):
         print("Number of Images doesn't match number of annotations")
 
-    for image_file in images_folder.iterdir():
-        is_valid_file_size(image_file, True)
+    for image_file in images_folder.iterdir(): 
+        if not is_valid_file_size(image_file, False):
+            if delete_empty_imgs:
+                print(f"Image '{image_file.stem}' has size 0 bytes. Deleting it and its annotation")
+                remove_empty_images_and_annotations(image_file, images_folder, annotations_folder, data_path)
+            else:
+                raise UserWarning(
+                    f"Image '{image_file.stem}' has size 0 bytes. Please check"
+                )
+            continue
         annotation = next(annotations_folder.glob(f"*{image_file.stem}*"), None)
         if not annotation:
             raise FileNotFoundError(
@@ -73,7 +97,14 @@ def is_valid_data(
             )
 
     for annotation in annotations_folder.iterdir():
-        is_valid_file_size(annotation, True)
+        if not is_valid_file_size(annotation, False):
+            if delete_empty_imgs:
+                remove_empty_images_and_annotations(annotation, images_folder, annotations_folder, data_path)
+            else:
+                raise UserWarning(
+                    f"Annotation '{annotation.stem}' has size 0 bytes. Please check"
+                )
+            continue
         annotation_id = annotation.stem.split("gt_")[1]
         image = next(images_folder.glob(f"*{annotation_id}*"), None)
         if not image:
