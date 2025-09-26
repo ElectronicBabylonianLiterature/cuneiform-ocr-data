@@ -1,45 +1,163 @@
 {
-  "ABZ15": ["KA", "|KA\u00d7GIR\u2082|"],
-  "ABZ52": ["|UD@s\u00d7BAD|", "|UD\u00d7(U.U.U)|"],
-  "ABZ58": ["KU\u2084", "TE@g", "TU"],
-  "ABZ60": ["PAP", "|PAP.PAP\u00d7\u0160E|"],
-  "ABZ69": ["BAD", "TIL"],
-  "ABZ73": ["TI", "TI@t"],
-  "ABZ74": ["1(BAN\u2082)", "BAR", "MA\u0160"],
-  "ABZ87": ["NUN", "NUN@t"],
-  "ABZ115": ["SAG", "|SAG\u00d7NUN|"],
-  "ABZ144": ["TUR", "|TUR&TUR.ZA&ZA|", "|TUR.DI\u0160|"],
-  "ABZ151": ["LUGAL", "|LUGAL@LUGAL|"],
-  "ABZ152": ["EZEN", "KE\u0160\u2082"],
-  "ABZ167": ["GAB", "DUH", "GABA"],
-  "ABZ211": ["U\u0160", "|U\u0160\u00d7KU|", "|U\u0160\u00d7TAK\u2084|"],
-  "ABZ279": ["HI\u00d7BAD", "|HI\u00d7BAD|"],
-  "ABZ295": ["BANMIN", "PA"],
-  "ABZ312": ["KALAM", "UN"],
-  "ABZ314": ["MES", "\u0160ID"],
-  "ABZ319": ["GA", "GA@g", "|GA.MA\u2082.IGI@g|", "|GA.UZ\u2083.IGI@g|"],
-  "ABZ322": ["GURU\u0160", "KAL"],
-  "ABZ331": ["ILIMMU\u2083", "URI\u2083", "\u0160E\u0160"],
-  "ABZ339": ["A\u0160\u2082", "BANE\u0160", "ZIZ\u2082"],
-  "ABZ371": ["BU", "|BU%BU|"],
-  "ABZ376": ["TE", "|TE.A|"],
-  "ABZ384": ["|\u0160A\u2083\u00d7BAD|", "\u0160A\u2083"],
-  "ABZ393": ["ERIN\u2082", "PIR\u2082"],
-  "ABZ396": ["HI", "KISIM\u2085", "T\u00cd", "\u0160AR\u2082"],
-  "ABZ399": ["IM", "NI\u2082"],
-  "ABZ480": ["DI\u0160", "NIGIDA"],
-  "ABZ536": [
-    "DUR\u2082",
-    "E\u0160\u2082",
-    "KU",
-    "NAM\u2082",
-    "TUG\u2082",
-    "ZI\u2083"
-  ],
-  "ABZ537": ["DIB", "LU"],
-  "ABZ545": ["\u0160UDUN", "|\u0160U\u2082.DUN\u2083@g@g@s|", "\u0160U\u2082"],
-  "ABZ554": ["SAL", "|SAL.LAGAR|"],
-  "ABZ586": ["4(DI\u0160)", "NIGIDALIMMU", "ZA"],
-  "ABZ595": ["DUN\u2083", "DUN\u2083@g"],
-  "ABZ597": ["GAR", "LIMMU"]
+    "ABZ15": [
+        "KA",
+        "|KA×GIR₂|"
+    ],
+    "ABZ52": [
+        "|UD@s×BAD|",
+        "|UD×(U.U.U)|"
+    ],
+    "ABZ58": [
+        "KU₄",
+        "TE@g",
+        "TU"
+    ],
+    "ABZ60": [
+        "PAP",
+        "|PAP.PAP×ŠE|"
+    ],
+    "ABZ69": [
+        "BAD",
+        "TIL"
+    ],
+    "ABZ73": [
+        "TI",
+        "TI@t"
+    ],
+    "ABZ74": [
+        "1(BAN₂)",
+        "BAR",
+        "MAŠ"
+    ],
+    "ABZ87": [
+        "NUN",
+        "NUN@t"
+    ],
+    "ABZ115": [
+        "SAG",
+        "|SAG×NUN|"
+    ],
+    "ABZ144": [
+        "TUR",
+        "|TUR&TUR.ZA&ZA|",
+        "|TUR.DIŠ|"
+    ],
+    "ABZ151": [
+        "LUGAL",
+        "|LUGAL@LUGAL|"
+    ],
+    "ABZ152": [
+        "EZEN",
+        "KEŠ₂"
+    ],
+    "ABZ167": [
+        "GAB",
+        "DUH",
+        "GABA"
+    ],
+    "ABZ211": [
+        "UŠ",
+        "|UŠ×KU|",
+        "|UŠ×TAK₄|"
+    ],
+    "ABZ279": [
+        "HI×BAD",
+        "|HI×BAD|"
+    ],
+    "ABZ295": [
+        "BANMIN",
+        "PA"
+    ],
+    "ABZ312": [
+        "KALAM",
+        "UN"
+    ],
+    "ABZ314": [
+        "MES",
+        "ŠID"
+    ],
+    "ABZ319": [
+        "GA",
+        "GA@g",
+        "|GA.MA₂.IGI@g|",
+        "|GA.UZ₃.IGI@g|"
+    ],
+    "ABZ322": [
+        "GURUŠ",
+        "KAL"
+    ],
+    "ABZ331": [
+        "ILIMMU₃",
+        "URI₃",
+        "ŠEŠ"
+    ],
+    "ABZ339": [
+        "AŠ₂",
+        "BANEŠ",
+        "ZIZ₂"
+    ],
+    "ABZ371": [
+        "BU",
+        "|BU%BU|"
+    ],
+    "ABZ376": [
+        "TE",
+        "|TE.A|"
+    ],
+    "ABZ384": [
+        "|ŠA₃×BAD|",
+        "ŠA₃"
+    ],
+    "ABZ393": [
+        "ERIN₂",
+        "PIR₂"
+    ],
+    "ABZ396": [
+        "HI",
+        "KISIM₅",
+        "TÍ",
+        "ŠAR₂"
+    ],
+    "ABZ399": [
+        "IM",
+        "NI₂"
+    ],
+    "ABZ480": [
+        "DIŠ",
+        "NIGIDA"
+    ],
+    "ABZ536": [
+        "DUR₂",
+        "EŠ₂",
+        "KU",
+        "NAM₂",
+        "TUG₂",
+        "ZI₃"
+    ],
+    "ABZ537": [
+        "DIB",
+        "LU"
+    ],
+    "ABZ545": [
+        "ŠUDUN",
+        "|ŠU₂.DUN₃@g@g@s|",
+        "ŠU₂"
+    ],
+    "ABZ554": [
+        "SAL",
+        "|SAL.LAGAR|"
+    ],
+    "ABZ586": [
+        "4(DIŠ)",
+        "NIGIDALIMMU",
+        "ZA"
+    ],
+    "ABZ595": [
+        "DUN₃",
+        "DUN₃@g"
+    ],
+    "ABZ597": [
+        "GAR",
+        "LIMMU"
+    ]
 }

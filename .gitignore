@@ -29,9 +29,6 @@ data.tar.gz
 ready-for-training.tar
 *.json
 .env
-cmds.txt
-tags
 activate_venv.sh
 *.log
-images_to_delete
 *.zip
