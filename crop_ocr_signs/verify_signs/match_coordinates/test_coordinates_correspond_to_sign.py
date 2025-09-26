@@ -39,6 +39,12 @@ def from_relative_coordinates(
         "y": 21.25577256559395, 
         "width": 12.258344883370038,
         "height": 6.828714212345857
+    }),
+    ("K.3544.jpg", "DIŠ", {
+        "x": 33.97947062982892,
+        "y": 19.003925401065878,
+        "width": 5.257918671530077,
+        "height": 2.68732130400506
     }) 
 ])
 def test_check_ocr_coordinates_match_sign(photo_file_name, target_sign, geometry):
