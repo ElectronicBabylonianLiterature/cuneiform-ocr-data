@@ -1,7 +1,8 @@
 # standard imports 
 from collections import defaultdict
 import json
-from typing import List, Dict, Union
+import traceback
+from typing import List, Dict, Optional, Union
 
 # package imports
 from pydantic import BaseModel
@@ -20,8 +21,9 @@ Match names of crops in folder `signs_40k_ocr_no_partial_order` to its geometry 
 ################################
 
 class Annotation(BaseModel):
-    geometry: Dict[str, float]
+    geometry: Optional[Dict[str, float]]
     data: Dict[str, Union[str, bool]]
+    absolute_geometry: Optional[List[float]]
     # croppedSign: Dict[str, str]
 
 class AnnotationObject(BaseModel):
@@ -77,7 +79,12 @@ def get_annotations_for_signs(db, cropped_ocred_signs_and_index_array, ocr_signs
         annotation = defaultdict()
 
         abs_coordinates = ocr_coordinates_list[int(idx)]
-        relative_geom = convert_abs_coordinates_to_relative_geometry(abs_coordinates, *image.size)
+        if not image:
+            relative_geom = {} 
+            annotation["absolute_geometry"] = abs_coordinates
+        else: 
+            relative_geom = convert_abs_coordinates_to_relative_geometry(abs_coordinates, *image.size)
+            annotation["absolute_geometry"] =[]
 
         annotation["geometry"] = relative_geom 
         annotation["data"] = {
@@ -88,6 +95,7 @@ def get_annotations_for_signs(db, cropped_ocred_signs_and_index_array, ocr_signs
         } 
         annotation_object = Annotation(**annotation)
         annotations.append(annotation_object)
+
     return annotations
 
 
@@ -99,17 +107,39 @@ if __name__ == '__main__':
     ocr_signs_array = read_json_file()
     ocr_signs_dict = transform_signs_array_to_signs_dict(ocr_signs_array)
 
-    all_annotation_objs = []
-    for fragment_number in tqdm(list(crops_groupped_by_fragment.keys())[:3]):
-        crops_of_fragment = crops_groupped_by_fragment[fragment_number]
-        # get ocredSigns and match with coordinates
-        cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict, crops_of_fragment)
-        annotations = get_annotations_for_signs(db, cropped_ocred_signs_and_index_array,ocr_signs_dict, fragment_number)
-        annotation_obj = AnnotationObject(**{
-            "fragmentNumber": fragment_number,
-            "annotations": annotations
-        })
-        all_annotation_objs.append(annotation_obj.dict())
 
+    all_annotation_objs = []
+    fragment_numbers = list(crops_groupped_by_fragment.keys())
+    for i, fragment_number in tqdm(enumerate(fragment_numbers)):
+        try:
+            crops_of_fragment = crops_groupped_by_fragment[fragment_number]
+            # get ocredSigns and match with coordinates
+            cropped_ocred_signs_and_index_array = get_ocred_signs(fragment_number, ocr_signs_dict, crops_of_fragment)
+            annotations = get_annotations_for_signs(db, cropped_ocred_signs_and_index_array,ocr_signs_dict, fragment_number)
+            annotation_obj = AnnotationObject(**{
+                "fragmentNumber": fragment_number,
+                "annotations": annotations
+            })
+            all_annotation_objs.append(annotation_obj.dict())
+            
+        except Exception as e:
+            error_info = {
+                "message": str(e),
+                "traceback": traceback.format_exc()
+            }
+            with open(f"annotations_output_error.log", "a") as f:
+                json.dump(error_info, f)
+                f.write("\n")
+        
+        with open("annotations_output.json", "a", encoding="utf-8") as f:
+            if i == 0:
+                f.write("[") 
+            if i > 0:
+                f.write(",")  # add comma before every element except the first
+            json.dump(annotation_obj.dict(), f, ensure_ascii=False, indent=2)
+            if i == len(fragment_numbers)-1:
+                f.write("]")
+
+    # writing from the array object in one go
     with open("annotations_from_crops.json", "w", encoding="utf-8") as f:
         json.dump(all_annotation_objs, f, ensure_ascii=False, indent=2)
