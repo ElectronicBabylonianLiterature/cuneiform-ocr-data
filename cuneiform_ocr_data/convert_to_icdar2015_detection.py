@@ -5,6 +5,7 @@ import shutil
 import warnings
 from pathlib import Path
 from typing import Optional, List, Tuple, Sequence
+from PIL import Image
 
 from mmocr.datasets.preparers import DatasetPreparer
 from mmocr.datasets.preparers.data_preparer import DATA_PARSERS
@@ -18,6 +19,7 @@ nproc = 4
 task = "textdet"
 dataset_zoo_path = "cuneiform_ocr_data/dataset_zoo"
 
+Image.MAX_IMAGE_PIXELS = None  # Disable DecompressionBombError
 
 @DATA_PARSERS.register_module()
 class EblTxtTextDetAnnParser(BaseParser):
@@ -138,13 +140,22 @@ def prepare_data(data_path, output_path, test_set):
 
 
 if __name__ == "__main__":
-    data_path = Path("data/processed-data/detection/deebscribe/total")
-    test_set_path = Path("data/processed-data/detection/test/test_imgs.txt")
+    ICDAR_DATA_PATH = os.environ.get(
+        "ICDAR_DATA_PATH", "data/processed-data/detection/deebscribe/total"
+    )
+    ICDAR_TEST_SET_PATH = os.environ.get(
+        "ICDAR_TEST_SET_PATH", "data/processed-data/detection/test/test_imgs.txt"
+    )
+    ICDAR_OUTPUT_PATH = os.environ.get(
+        "ICDAR_OUTPUT_PATH", "cuneiform_ocr_data/data"
+    )
+    data_path = Path(ICDAR_DATA_PATH)
+    test_set_path = Path(ICDAR_TEST_SET_PATH)
     # read newline seperated txt file and save to list
     with open(test_set_path, "r") as f:
         test_set = f.read().splitlines()
     is_valid_data(data_path)
 
-    output_path = Path("cuneiform_ocr_data/data") / "icdar2015"
+    output_path = Path(ICDAR_OUTPUT_PATH) / "icdar2015"
     prepare_data(data_path, output_path, test_set)
     main()
