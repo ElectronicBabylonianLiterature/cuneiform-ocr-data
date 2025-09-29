@@ -17,11 +17,13 @@ Make sure PYTHONPATH is root of repository
 See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdTAxNKPLSRNYb/CuneiformOCR_part1_data.mp4).
 
 ## Data
-The data was fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`. 
+You can use `fetch_ocr_data.sh` to fetch the newest ebl data. To run the script, modify the Configuration of the script on the beginning or pass them as envirment variables.
 
-To update the dataset use previous function to get new fragments, after that run [filter](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr-data/blob/601b7125d43318a019f45412f8604bbdbac09b7c/cuneiform_ocr_data/filter_annotations.py) to get fragments appliable for the training.
+The data are fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`. 
 
-download [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601)  raw-data and processed-data according to instructions below. This code will use raw-data and processed-data and output the data as in ready-for-training (i.e. icdar2015 and coco2017 format) (see in zenodoo ready-for-training.tar.gz). 
+And then filtered using [filter](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr-data/blob/601b7125d43318a019f45412f8604bbdbac09b7c/cuneiform_ocr_data/filter_annotations.py) to get fragments appliable for the training.
+
+The first released training data and models on the paper can be downloaded from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601). The raw-data were processed according to instructions below. This code will use raw-data and processed-data and output the data as in ready-for-training (i.e. icdar2015 and coco2017 format) (see in zenodoo ready-for-training.tar.gz). 
 Directory Structure
 ```
 data
@@ -60,6 +62,49 @@ data
 
 7. Optionally: Create Coco Style Dataset  `convert_to_coco.py` will create only a test set coco style
 
+The following commands can be used to do these steps:
+```sh
+# Run fetch_ocr_data.sh
+export MONGODB_URI="Your Mongo DB connection"
+./fetch_ocr_data.sh 
+
+# Run extract_contours.py
+DATE_TAG="$(date +%Y-%m-%d)"
+export EBL_ANNOTATIONS_PATH="./data/filtered_annotations"
+export EBL_DETECTION_EXTRACTED_PATH="./data/processed-data/ebl/ebl-$DATE_TAG/"
+python -m cuneiform_ocr_data.extract_contours 
+
+# (If necessary) Remove the largest YBC* images and annotations because they are very large and can not be seperated by contours
+DATE_TAG="$(date +%Y-%m-%d)"
+BASE_DIR="data/processed-data/ebl/ebl-$DATE_TAG"
+find "$BASE_DIR/imgs" -name "YBC*.jpg" -size +10M # first have a look
+
+for img in $(find "$BASE_DIR/imgs" -name "YBC*.jpg" -size +10M -exec basename {} .jpg \;); do
+    rm -f "$BASE_DIR/annotations/gt_$img.txt"
+done
+find "$BASE_DIR/imgs" -name "YBC*.jpg" -size +10M -exec rm -v {} \;
+
+# Run select_test_set.py
+DATE_TAG="$(date +%Y-%m-%d)"
+export EBL_DETECTION_EXTRACTED_PATH="./data/processed-data/ebl/ebl-$DATE_TAG/"
+export TEST_SET_SIZE="100"
+export TEST_PATH="./data/processed-data/ebl/test"
+export DELETE_EMPTY_IMGS="yes"
+python -m cuneiform_ocr_data.select_test_set
+
+# Convert to coco dataset
+export DATA_TRAIN="data/processed-data/ebl/train"
+export DATA_TEST="data/processed-data/ebl/test"
+export COCO_OUTPUT_PATH="data/processed-data/data-coco"
+python -m cuneiform_ocr_data.convert_to_coco_recognition
+
+# Convert to icdar dataset
+export ICDAR_DATA_PATH="./data/processed-data/ebl/ebl-$DATE_TAG/"
+export ICDAR_TEST_SET_PATH="./data/processed-data/ebl/test/test_imgs.txt"
+# export ICDAR_OUTPUT_PATH="./data/processed-data/data-icdar"
+unset ICDAR_OUTPUT_PATH
+python -m cuneiform_ocr_data.convert_to_icdar2015_detection
+```
 
 ### Dataformat
 image: P3310-0.jp, with gt_P3310-0.txt.
