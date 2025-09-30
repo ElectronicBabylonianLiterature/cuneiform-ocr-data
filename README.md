@@ -53,7 +53,7 @@ data
 
    2.1. Run `extract_contours.py` with `EXTRACT_AUTMOATICALLY=False` on `data/raw-data/ebl/detection`
 
-   2.2. Run `display_bboxes.py` and use keys to delete all which are not good quality
+   2.2. Run `display_bboxes.py` and use keys to delete all which are not good quality (**N.B.**: The `filter_annotations.py` script makes this step unnecessary).
 
 3. Run `select_test_set.py` which will select 50 randomly images from `data/processed-data/ebl/ebl-detection-extracted-deleted` (currently no option to create val set because of small size of dataset)
 
