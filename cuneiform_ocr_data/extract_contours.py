@@ -2,9 +2,11 @@
 import shutil
 from pathlib import Path
 from typing import List
-
+from datetime import datetime
 import cv2
 import numpy as np
+import json
+import os 
 
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer, BoundingBox
 from cuneiform_ocr_data.utils import create_directory
@@ -61,20 +63,20 @@ def extract_contours(img: np.ndarray, bboxes):
                 result and results.append(result)
     return results
 
+def filter_out_images_without_annotations(output_data_path, log_file):
+    """Filter out sides of fragments that have no annotations, e.g. HS.1342-1.jpg as of 17 Apr 2025."""
+    annotation_dir = f"{output_data_path}/annotations"
+    annotations_files = [os.path.join(annotation_dir, f) for f in os.listdir(annotation_dir)]
+    empty_annotation_files = [Path(f) for f in annotations_files if os.path.getsize(f) == 0]
+    img_files_to_delete = [f"{output_data_path}/imgs/{f.stem.replace('gt_','')}.jpg" for f in empty_annotation_files]
+    [os.remove(f) for f in empty_annotation_files + img_files_to_delete]
 
-if __name__ == "__main__":
-    """
-    This script will extract contours from images and create new images and annotations.
-    If struct bounding boxes (obverse, reverse, ...) are given in the annotations the contours can be extracted using
-    these annotations. If not, the contours will be extracted automatically. One has to set the flag.
-    """
+    with open(f"{output_data_path}/{log_file}", "a") as f:
+        json.dump({"deleted_images_without_annotations": img_files_to_delete}, f)
+        f.write("\n")
 
-    EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("data/raw-data/ebl/detection")
-    output_data_path = Path(
-        "data/processed-data/ebl/ebl-detection-extracted-30-11"
-    )
 
+def generate_files_with_contours(extract_contours, output_data_path, valid_fragments, log_file):
     input_annotations_folder = input_data / "annotations"
     input_imgs_folder = input_data / "imgs"
 
@@ -85,8 +87,8 @@ if __name__ == "__main__":
     create_directory(output_imgs)
     create_directory(output_annotations)
 
-    images = list(input_imgs_folder.iterdir())
-    annotations = list(input_annotations_folder.iterdir())
+    images = [img for img in list(input_imgs_folder.iterdir()) if img.stem in valid_fragments]
+
     for counter, image_path in enumerate(images):
         print(f"{counter} of {len(images)}")
         annotation_file = next(
@@ -94,7 +96,24 @@ if __name__ == "__main__":
         )
         if annotation_file is None:
             raise Exception("Not found annotations for image:", image_path.name)
-        bounding_boxes_container = BoundingBoxesContainer.from_file(annotation_file)
+
+        bounding_boxes_container = None 
+        try:
+            bounding_boxes_container = BoundingBoxesContainer.from_file(annotation_file)
+        except Exception as e:
+            import traceback
+            import json
+            error_info = {
+                "annotation_file": str(annotation_file),
+                "type": type(e).__name__,
+                "message": str(e),
+                "traceback": traceback.format_exc()
+            }
+
+            with open(f"{output_data_path}/{log_file}", "a") as f:
+                json.dump(error_info, f)
+                f.write("\n")
+            continue
 
         if EXTRACT_CONTOURS_AUTOMATICALLY:
             image = cv2.imread(str(image_path))
@@ -108,6 +127,7 @@ if __name__ == "__main__":
                 contours = []
         else:
             contours = bounding_boxes_container.contours
+
         if len(contours):
             image = cv2.imread(str(image_path))
             for counter, contour in enumerate(contours):
@@ -143,4 +163,26 @@ if __name__ == "__main__":
         else:
             shutil.copy(image_path, output_imgs / image_path.name)
             shutil.copy(annotation_file, output_annotations / annotation_file.name)
-    print("Done")
+
+def get_valid_fragments(input_data):
+    with open(f"{input_data}/valid_fragments.json") as json_data:
+        return json.load(json_data)
+
+if __name__ == "__main__":
+    """
+    This script will extract contours from images and create new images and annotations.
+    If struct bounding boxes (obverse, reverse, ...) are given in the annotations the contours can be extracted using
+    these annotations. If not, the contours will be extracted automatically. One has to set the flag.
+    """
+
+    EXTRACT_CONTOURS_AUTOMATICALLY = False
+    input_data = Path("data/raw-data/ebl/detection")
+    output_data_path = Path(
+        f"data/processed-data/ebl/ebl-detection-extracted-{datetime.today().strftime('%d-%m-%y')}"
+    )
+    log_file = "log_extract_contours.jsonl"
+    valid_fragments = get_valid_fragments(input_data)
+    generate_files_with_contours(extract_contours, output_data_path, valid_fragments, log_file)
+
+    filter_out_images_without_annotations(output_data_path, log_file)
+

@@ -3,8 +3,15 @@ openpyxl
 unidecode
 pandas
 tensorboard
-opencv-python
 flake8
 black
 attrs
 xlrd
+torch
+numpy<2
+Pillow
+pymongo
+tqdm
+shapely
+pytest
+opencv-python

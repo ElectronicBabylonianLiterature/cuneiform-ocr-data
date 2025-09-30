@@ -3,12 +3,14 @@ from functools import reduce
 from pathlib import Path
 
 from cuneiform_ocr_data.utils import create_directory, validate_imgs
-
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='cuneiform_ocr_data/classification/gather_all.log', encoding='utf-8', level=logging.DEBUG)
 
 def _prep_data(data, path, class_to_int, txt_file_name):
     txt = ""
     for k, v in data.items():
-        print(f"{k} and {len(v)}")
+        logging.info(f"{k}, quantity: {len(v)}")
         create_directory(f"{path}/{k}", overwrite=True)
         for file in v:
             shutil.copyfile(file, f"{path}/{k}/{file.name}")
@@ -47,23 +49,28 @@ def len_values(data):
 
 
 if __name__ == "__main__":
-    create_directory(
-        "cuneiform-ocr/cuneiform_ocr_data/classification/data/ebl", overwrite=True
-    )
-    data_ebl = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg-train")
-    )
-    data_cdp = prepare_data(
-        Path("data/processed-data/classification/urschrei-CDP-processed")
-    )
-    data_jooch = prepare_data(
-        Path("data/processed-data/classification/Cuneiform Dataset JOOCH")
-    )
-    data_labasi = prepare_labasi_data(Path("data/processed-data/classification/labasi"))
 
-    data = merge_value_list_multiple_dicts(data_ebl, data_cdp, data_jooch, data_labasi)
+    data_ebl = prepare_data(
+        Path("data/processed-data/classification/ebl-train")
+    )
+    # data_ebl = prepare_data(
+    #     Path("data/processed-data/classification/ebl+heidelberg-train")
+    # )
+    # data_cdp = prepare_data(
+    #     Path("data/processed-data/classification/urschrei-CDP-processed")
+    # )
+    # data_jooch = prepare_data(
+    #     Path("data/processed-data/classification/Cuneiform Dataset JOOCH")
+    # )
+    # data_labasi = prepare_labasi_data(Path("data/processed-data/classification/labasi"))
+
+    # data = merge_value_list_multiple_dicts(data_ebl, data_cdp, data_jooch, data_labasi)
+    data = data_ebl
+    # data_test = prepare_data(
+    #     Path("data/processed-data/classification/ebl+heidelberg-test")
+    # )
     data_test = prepare_data(
-        Path("data/processed-data/classification/ebl+heidelberg-test")
+        Path("data/processed-data/classification/ebl-test")
     )
 
     NOT_TO_INCLUDE = ["NoABZ", "NoABZ0"]
@@ -71,8 +78,8 @@ if __name__ == "__main__":
         data.pop(elem, None)
         data_test.pop(elem, None)
 
-    print("Signs: ", len(data.keys()))
-    print("Total Data:", len_values(data))
+    logging.info("Signs: %d" % len(data.keys()))
+    logging.info("Total Data: %d" % len_values(data))
     MINIMUM_SAMPLE_SIZE = 100
     # only keep signs with more than 50 samples
     data = {k: v for k, v in data.items() if len(v) >= MINIMUM_SAMPLE_SIZE}
@@ -83,18 +90,18 @@ if __name__ == "__main__":
     }
 
     classes = [f"{k} {len(v)}" for k, v in data.items()]
-    print([f"{k} {len(v)}" for k, v in data.items()])
+    logging.info([f"{k} {len(v)}" for k, v in data.items()])
     # write classes as list to txt file
 
     class_to_int = {k: i for i, k in enumerate(data.keys())}
-    print("ABZ Signs: ", data.keys())
-    print("Number of imgs: ", len_values(data))
-    print("Number of signs: ", len(data))
+    logging.info("ABZ Signs: %s" % data.keys())
+    logging.info("Number of imgs: %d" % len_values(data))
+    logging.info("Number of signs: %d" % len(data))
 
     """
     #Plot the number of images per sign
-    print("Number of signs:", len(data))
-    print("\n".join([f"{k} {v}" for k, v in data.items()]))
+    logging.info("Number of signs: %d", % len(data))
+    logging.info("\n".join([f"{k} {v}" for k, v in data.items()]))
 
     ### matplotlib dict plot
     data1 = {k: len(v) for k, v in data.items()}
@@ -112,29 +119,28 @@ if __name__ == "__main__":
         if k in train_data.keys():
             test_data[k] = v
         else:
-            print(f"Test data contains sign {k} which is not in train data")
+            logging.info(f"Test data contains sign {k} which is not in train data")
             test_category_not_in_train[k] = v
     for k, v in train_data.items():
         if k not in test_data.keys():
             test_data[
                 k
             ] = []  # need empty directory even if train data is not present in test set
-            print(f"Train data contains sign {k} which is not in test data")
+            logging.info(f"Train data contains sign {k} which is not in test data")
             train_category_not_in_test[k] = train_data[k]
 
-    print("Test instances not in train: ", len_values(test_category_not_in_train))
-    print("Train instances not in test: ", len_values(train_category_not_in_test))
-    print()
-    print(
-        "Test Category not in train: ",
+    logging.info("Test instances not in train:  %d" % len_values(test_category_not_in_train))
+    logging.info("Train instances not in test:  %d" % len_values(train_category_not_in_test))
+    logging.info(
+        "Test Category not in train: %s" %
         list(set(list(test_category_not_in_train.keys()))),
     )
     train_data.pop("NoABZ", None)
     test_data.pop("NoABZ", None)
-    print("Number of train signs:", len(train_data.keys()))
-    print("Number of train imgs: ", len_values(train_data))
-    print("Number of test signs:", len(test_data.keys()))
-    print("Number of test imgs: ", len_values(test_data))
+    logging.info("Number of train signs: %d" % len(train_data.keys()))
+    logging.info("Number of train imgs:  %d" % len_values(train_data))
+    logging.info("Number of test signs: %d" % len(test_data.keys()))
+    logging.info("Number of test imgs:  %d" % len_values(test_data))
 
     # copy each file of value of train_data dict to directory
     create_directory(
@@ -142,7 +148,7 @@ if __name__ == "__main__":
         overwrite=True,
     )
     create_directory(
-        "cuneiform_ocr_data/classification/ebl/train_set/train_set",
+        "cuneiform_ocr_data/classification/data/ebl/train_set/train_set",
         overwrite=True,
     )
     _prep_data(
