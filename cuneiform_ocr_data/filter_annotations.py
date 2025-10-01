@@ -1,8 +1,10 @@
 import json
 from pymongo import MongoClient
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-CONNECTION = os.environ.get('MONGODB_CONNECTION', '') #Your MONGODB Connection string
+CONNECTION = os.getenv("MONGODB_URI") #Your MONGODB Connection string
 
 client = MongoClient(CONNECTION)
 db = client['ebl']
@@ -55,7 +57,8 @@ def keep_fragments(directory, collection_name):
     return valid_fragments
 
 # Directory containing the annotation files (can be overridden by environment variable)
-directory = os.environ.get('ANNOTATIONS_DIRECTORY', 'annotations')
+directory = os.environ.get('ANNOTATIONS_DIRECTORY', 'annotations/annotations')
+
 
 # Collection name in MongoDB
 collection_name = 'fragments'  # replace with your actual collection name

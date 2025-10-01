@@ -1,0 +1,3 @@
+opencv-python # can run for hours, use ```sudo pip install opencv-python --verbose``` to show installation progress
+ipython
+
