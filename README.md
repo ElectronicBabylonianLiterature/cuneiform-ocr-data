@@ -17,13 +17,13 @@ Make sure PYTHONPATH is root of repository
 See the explanatory video [here](https://syncandshare.lrz.de/getlink/fiTPERQRzdTAxNKPLSRNYb/CuneiformOCR_part1_data.mp4).
 
 ## Data
-You can use `fetch_ocr_data.sh` to fetch the newest ebl data. To run the script, modify the Configuration of the script on the beginning or pass them as envirment variables.
+You can use `fetch_ocr_data.sh` to fetch the newest ebl data. To run the script, modify the Configuration of the script at the beginning or pass them as environment variables.
 
-The data are fetched from our api `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`. 
+The data are fetched from our api with `https://github.com/ElectronicBabylonianLiterature/ebl-api/blob/master/ebl/fragmentarium/retrieve_annotations.py`. 
 
 And then filtered using [filter](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr-data/blob/601b7125d43318a019f45412f8604bbdbac09b7c/cuneiform_ocr_data/filter_annotations.py) to get fragments appliable for the training.
 
-The first released training data and models on the paper can be downloaded from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601). The raw-data were processed according to instructions below. This code will use raw-data and processed-data and output the data as in ready-for-training (i.e. icdar2015 and coco2017 format) (see in zenodoo ready-for-training.tar.gz). 
+The initial training data and models from the paper are available for download at [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601). The raw data were processed following the instructions below. This code processes both raw and processed data, outputting them in training-ready formats (ICDAR2015 and COCO2017), as shown in the ready-for-training.tar.gz file on Zenodo. 
 Directory Structure
 ```
 data
