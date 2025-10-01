@@ -1,11 +1,11 @@
-# Cuneiform OCR Data Preprocessing and Post Processing, part of the EBL Project [(Website)](https://www.ebl.lmu.de/), [(GitHub)](https://github.com/ElectronicBabylonianLiterature)
+# Cuneiform OCR Data Preprocessing and Post Processing, part of the eBL Project [(Website)](https://www.ebl.lmu.de/), [(GitHub)](https://github.com/ElectronicBabylonianLiterature)
 
-1. The data and most of the code in is part of Paper [Sign Detection for Cuneiform Tablets from Yunus Cobanoglu, Luis Sáenz, Ilya Khait, Enrique Jiménez](https://www.degruyter.com/document/doi/10.1515/itit-2024-0028/html). <br/>
+1. The data and most of the code in this repository is part of Paper [Sign Detection for Cuneiform Tablets from Yunus Cobanoglu, Luis Sáenz, Ilya Khait, Enrique Jiménez](https://www.degruyter.com/document/doi/10.1515/itit-2024-0028/html). <br/>
    Data on Zenodoo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10693601.svg)](https://doi.org/10.5281/zenodo.10693601).
 
-   See [https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md) for overview and general information of all repositories associated with the paper from above.
+   See [https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md](https://github.com/ElectronicBabylonianLiterature/cuneiform-ocr/blob/main/README.md) for an overview and general information of all repositories associated with the paper from above.
 
-2. In addition, the folder `crop_ocr_signs` refer to a subsequent part of the project, where the resulting crops from the OCR are processed and selected. See `Crop OCR Signs` below.
+2. In addition, the folder `crop_ocr_signs` refers to a subsequent part of the project, where the resulting crops from the OCR are processed and selected. See `Crop OCR Signs` below.
 
 ## Installation
 
@@ -95,7 +95,7 @@ Example: 0,0,10,10,KUR
    - Images are renamed `rename_to_mzl.py`
    - Images are mapped via urschrei-cdp corrected_instances_forimport.xlsx and custom mapping via `convert_cdp_and_jooch.py`
 3. Cuneiform JOOCH images are not used due to bad quality currently
-4. Labasi Project is scraped with `labasi/crawl_labasi_page.py` (can take very long multiple hours with interruptions) and renamed manually to fit ebl.txt mapping
+4. Labasi Project is scraped with `labasi/crawl_labasi_page.py` (can take multiple hours with interruptions) and renamed manually to fit ebl.txt mapping. It should also be possible to query Labasi through its [API](https://labasi.acdh.oeaw.ac.at/data/api/).
 
 ## Acknowledgements/ Citation
 
@@ -125,7 +125,7 @@ lastchecked = {2024-06-01}
 
 ## Crop OCR Signs
 
-The results from the OCR are in `eBL_OCRed_Signs.json`. To run the code, you will need to download that file from the 2024 Paper in Zenodo and put at the top level folder of the repo.
+The results from the first iteration of the 2024 OCR model are in the file [`eBL_OCRed_Signs.json`](https://doi.org/10.5281/zenodo.14009951). To run the code, you will need to download that file from the 2024 Paper in Zenodo and put at the top level folder of the repo.
 
 To crop the signs into a organised folders, run `crop_ocr_signs/extract_data.py`.
 
