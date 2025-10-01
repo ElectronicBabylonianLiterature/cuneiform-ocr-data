@@ -1,4 +1,5 @@
 # pyre-ignore-all-errors[16]
+import os
 import shutil
 from pathlib import Path
 from typing import List
@@ -94,6 +95,7 @@ def generate_files_with_contours(extract_contours, output_data_path, valid_fragm
         annotation_file = next(
             input_annotations_folder.glob(f"*{image_path.stem}.txt"), None
         )
+        print("image path", image_path, "annotation_file", annotation_file)
         if annotation_file is None:
             raise Exception("Not found annotations for image:", image_path.name)
 
@@ -176,9 +178,12 @@ if __name__ == "__main__":
     """
 
     EXTRACT_CONTOURS_AUTOMATICALLY = False
-    input_data = Path("data/raw-data/ebl/detection")
+    input_data = Path(os.environ.get("EBL_ANNOTATIONS_PATH", "data/raw-data/ebl/detection"))
     output_data_path = Path(
-        f"data/processed-data/ebl/ebl-detection-extracted-{datetime.today().strftime('%d-%m-%y')}"
+        os.environ.get(
+            "EBL_DETECTION_EXTRACTED_PATH", 
+            f"data/processed-data/ebl/ebl-detection-extracted-{datetime.today().strftime('%d-%m-%y')}"
+        )
     )
     log_file = "log_extract_contours.jsonl"
     valid_fragments = get_valid_fragments(input_data)

@@ -46,7 +46,7 @@ def keep_fragments(directory, collection_name):
                 result = collection.aggregate(pipeline)
                 for doc in result:
                     signs = doc['count']
-                print(signs)
+                print(signs, end=' ', flush=True)
 
             
             # If more than 50% match, keep this fragment
@@ -56,8 +56,9 @@ def keep_fragments(directory, collection_name):
     
     return valid_fragments
 
-# Directory containing the annotation files
-directory = 'annotations/annotations'
+# Directory containing the annotation files (can be overridden by environment variable)
+directory = os.environ.get('ANNOTATIONS_DIRECTORY', 'annotations/annotations')
+
 
 # Collection name in MongoDB
 collection_name = 'fragments'  # replace with your actual collection name

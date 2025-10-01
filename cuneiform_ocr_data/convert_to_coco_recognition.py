@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -7,13 +8,22 @@ from PIL import Image
 from cuneiform_ocr_data.bounding_boxes import BoundingBoxesContainer
 from cuneiform_ocr_data.sign_mappings.mappings import build_ebl_dict
 from cuneiform_ocr_data.utils import create_directory
+from datetime import datetime
 
 # this is in the mapping apriori
 UNCLEAR_SIGN = "UnclearSign"
 CUT_OFF = 90
-
+Image.MAX_IMAGE_PIXELS = None  # Disable DecompressionBombError
 
 def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
+    current_date = datetime.now()
+    info = {
+        "description": "Cuneiform OCR Dataset",
+        "version": "1.0",
+        "year": current_date.year,
+        "contributor": "eBL Project",
+        "date_created": current_date.strftime("%Y/%m/%d")
+    }
     annotations = []
     images = []
 
@@ -21,6 +31,7 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
     for counter, ann in enumerate(anns.iterdir()):
         id_ = ann.stem.split("gt_")[1]
         img_path = imgs / f"{id_}.jpg"
+        print("processing the {}: ".format(counter), img_path)
         width, height = Image.open(img_path).size
 
         local_path = str(img_path.name)
@@ -50,6 +61,7 @@ def create_coco(anns, imgs, out_path, categories, categories_with_ids, name):
             obj_count += 1
 
     coco_format_json = dict(
+        info=info,
         images=images, annotations=annotations, categories=categories_with_ids
     )
     for file in imgs.iterdir():
@@ -89,8 +101,10 @@ def get_categories_from_training_set(annotations, mapping):
 
 if __name__ == "__main__":
     mapping = build_ebl_dict()
-    data_train = Path("data/processed-data/detection/train")
-    out_path = Path("cuneiform_ocr_data/data-coco")
+    DATA_TRAIN = os.environ.get("DATA_TRAIN", "data/processed-data/detection/train")
+    COCO_OUTPUT_PATH = os.environ.get("COCO_OUTPUT_PATH", "cuneiform_ocr_data/data-coco")
+    data_train = Path(DATA_TRAIN)
+    out_path = Path(COCO_OUTPUT_PATH)
     if out_path.exists():
         shutil.rmtree(out_path)
     create_directory(out_path, overwrite=True)
@@ -112,8 +126,8 @@ if __name__ == "__main__":
     )
 
     print([c["name"] for c in categories_with_ids])
-
-    data_test = Path("data/processed-data/detection/test")
+    DATA_TEST = os.environ.get("DATA_TEST", "data/processed-data/detection/test")
+    data_test = Path(DATA_TEST)
     create_coco(
         data_test / "annotations",
         data_test / "imgs",

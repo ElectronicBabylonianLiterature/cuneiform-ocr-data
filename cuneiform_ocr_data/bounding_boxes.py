@@ -186,7 +186,12 @@ class BoundingBoxesContainer:
                     f"Image id: {image_id} Invalid Bounding Box: {elem}, Sign should be 'str'"
                 )
             assert isinstance(elem[4], str)
-            bboxes.append(BoundingBox(*elem))
+            try:
+                bounding_box = BoundingBox(*elem)
+                bboxes.append(bounding_box)
+            except ValueError as e:
+                print(f"Image id: {image_id} Invalid Bounding Box: {elem}, Error: {e}")
+                continue
         return BoundingBoxesContainer(image_id, bboxes)
 
     @classmethod

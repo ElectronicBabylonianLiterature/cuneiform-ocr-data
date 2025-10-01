@@ -27,6 +27,7 @@ data/processed-data/data-coco/data-coco
 data/processed-data/data
 data.tar.gz
 ready-for-training.tar
+.vscode
 *.json
 .env
 activate_venv.sh

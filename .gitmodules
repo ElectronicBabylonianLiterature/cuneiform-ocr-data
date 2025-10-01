@@ -1,0 +1,4 @@
+[submodule "ebl-api"]
+	path = ebl-api
+	url = https://github.com/ElectronicBabylonianLiterature/ebl-api.git
+	branch = re-train-ocr-model

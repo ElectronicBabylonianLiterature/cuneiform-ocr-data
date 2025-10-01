@@ -1,3 +1,4 @@
+import os
 import random
 import shutil
 from pathlib import Path
@@ -10,17 +11,23 @@ random.seed(0)
 
 if __name__ == "__main__":
     data_base_dir = "data/processed-data/ebl/ebl-detection-extracted-17-04-25"
-    all_data = Path(data_base_dir)
-    is_valid_data(all_data)
+    all_data = Path(os.environ.get("EBL_DETECTION_EXTRACTED_PATH", data_base_dir))
+    DELETE_EMPTY_IMGS = os.environ.get("DELETE_EMPTY_IMGS", "") == "yes"
+    if DELETE_EMPTY_IMGS:
+        is_valid_data(all_data, delete_empty_imgs=True)
+    else:
+        is_valid_data(all_data)
     # copy data to new folder
     path = all_data / "train"
     shutil.copytree(all_data, path)
-    test_path = Path(f"{data_base_dir}/test")
+
+    test_path = Path(os.environ.get("TEST_PATH", "test"))
     create_directory(test_path / "imgs", overwrite=True)
     create_directory(test_path / "annotations", overwrite=True)
     test_imgs = []
     test_gts = []
-    TEST_SET_SIZE = 70
+    TEST_SET_SIZE = os.environ.get("TEST_SET_SIZE", 50)
+    TEST_SET_SIZE = int(TEST_SET_SIZE)
     all_files = list((path / "imgs").iterdir())
     test_set = random.sample(all_files, TEST_SET_SIZE)
 
